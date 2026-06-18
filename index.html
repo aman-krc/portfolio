@@ -1,692 +1,1589 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Aman Kumar Choudhary — Data Analyst</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#080C14;
-  --bg2:#0D1420;
-  --bg3:#111927;
-  --surface:#131D2B;
-  --border:#1E2D40;
-  --border2:#243548;
-  --accent:#2E88FF;
-  --accent2:#00D4AA;
-  --accent3:#FF6B35;
-  --text:#E8EDF5;
-  --text2:#8A9BB0;
-  --text3:#4A5E74;
-  --mono:'DM Mono',monospace;
-  --display:'Syne',sans-serif;
-  --body:'DM Sans',sans-serif;
-}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--body);overflow-x:hidden;cursor:none}
+import React, { useState, useEffect } from 'react';
+import { 
+  Database, 
+  TrendingUp, 
+  Layers, 
+  Award, 
+  Terminal, 
+  Briefcase, 
+  GraduationCap, 
+  Search, 
+  Code, 
+  Filter, 
+  CheckCircle, 
+  ExternalLink, 
+  Mail, 
+  Linkedin, 
+  Cpu, 
+  FileText, 
+  Settings, 
+  RefreshCw, 
+  User, 
+  MapPin, 
+  ChevronRight, 
+  FileCheck, 
+  HelpCircle,
+  Activity,
+  Percent,
+  TrendingDown
+} from 'lucide-react';
 
-/* Custom cursor */
-#cursor{position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .1s,background .2s;mix-blend-mode:screen}
-#cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(46,136,255,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .15s ease}
-body:has(a:hover) #cursor{transform:translate(-50%,-50%) scale(3);background:var(--accent2)}
-body:has(a:hover) #cursor-ring{transform:translate(-50%,-50%) scale(0.5);opacity:0}
+// ==========================================
+// MOCK DATA & CONSTANTS
+// ==========================================
 
-/* Noise overlay */
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
+const DATA_INSIGHTS = [
+  { id: 'rec_01', category: 'Core Stack', item: 'Primary Database', value: 'Microsoft SQL Server / MySQL', status: 'Expert' },
+  { id: 'rec_02', category: 'Core Stack', item: 'BI & Reporting', value: 'Power BI (DAX, Power Query)', status: 'Advanced' },
+  { id: 'rec_03', category: 'Core Stack', item: 'Data Wrangling', value: 'Python (Pandas, NumPy)', status: 'Intermediate' },
+  { id: 'rec_04', category: 'Academic', item: 'Graduation CGPA', value: '8.94 / 10.00', status: 'High Honors' },
+  { id: 'rec_05', category: 'Academic', item: 'Specialization', value: 'BCA (Data Science)', status: 'Completed' },
+  { id: 'rec_06', category: 'Logistics', item: 'Current Location', value: 'Faridabad, Haryana', status: 'Available' },
+  { id: 'rec_07', category: 'Logistics', item: 'Target Locations', value: 'Delhi NCR (Gurgaon, Noida, Delhi)', status: 'Active' },
+  { id: 'rec_08', category: 'Logistics', item: 'Work Model Preference', value: 'On-site / Hybrid', status: 'Flexible' },
+  { id: 'rec_09', category: 'Soft Skills', item: 'Key Strength', value: 'Detail-Oriented & Accurate', status: 'Verified' },
+  { id: 'rec_10', category: 'Soft Skills', item: 'Process Execution', value: 'Structured Guideline Adherence', status: 'Verified' },
+];
 
-/* Grid background */
-body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(46,136,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(46,136,255,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+const EXPERIENCES = [
+  {
+    id: 'eduskills',
+    role: 'Data Analytics Intern',
+    organization: 'EduSkills Foundation',
+    type: 'Remote',
+    duration: 'Apr - Jun 2026 (3 mos)',
+    highlights: [
+      'Performed intensive data cleaning, handling, and preprocessing routines on unstructured and messy datasets using Python and SQL.',
+      'Developed multiple Power BI dashboards tracking business performance, customer insights, and operational key performance metrics.',
+      'Documented complete data workflows, from source data mapping to final reporting steps, enabling reliable team collaboration.',
+      'Created polished data summaries translating complex quantitative metrics into easy-to-understand recommendations for non-technical stakeholders.'
+    ],
+    skills: ['SQL', 'Power BI', 'Python', 'KPI Reporting', 'Data Cleaning']
+  },
+  {
+    id: 'iiit-dharwad',
+    role: 'Research Intern',
+    organization: 'IIIT Dharwad (Indian Institute of Information Technology)',
+    type: 'Remote',
+    duration: 'Feb - May 2026 (5 mos)',
+    highlights: [
+      'Contributed as an active student research team member focused on academic reviews, structured documentation, and conceptual ideation.',
+      'Developed detailed research reports requiring rigorous data collection, cross-referencing, and verification of scientific literature.',
+      'Collaborated effectively within a high-performing academic environment, strictly adhering to formal publication standards and guidelines.',
+      'Translated highly abstract technical specifications and methodologies into structured, clear, and comprehensive written document sets.'
+    ],
+    skills: ['Technical Writing', 'Data Gathering', 'Research Methodology', 'Structured Documentation']
+  },
+  {
+    id: 'lingaya-admissions',
+    role: 'Intern - Admissions Department',
+    organization: "Lingaya's Vidyapeeth",
+    type: 'On-site (Faridabad)',
+    duration: 'Apr - Jul 2025 (4 mos)',
+    highlights: [
+      'Maintained precise, structured data records of all student interactions, tracking applications and program pipelines through multiple stages.',
+      'Handled high-volume applicant communications via official email and phone lines, maintaining professional and clear guidance.',
+      'Supported on-site admissions information sessions under supervisor control, demonstrating outstanding verbal communication skills.',
+      'Identified and resolved data entry inconsistencies in the CRM applicant database, noticeably improving records reliability.'
+    ],
+    skills: ['Data Entry & QC', 'MS Excel', 'CRM Operations', 'Client Communication', 'Records Management']
+  },
+  {
+    id: 'edunet',
+    role: 'AI Intern (TechSaksham - Microsoft & SAP CSR)',
+    organization: 'Edunet Foundation',
+    type: 'Remote',
+    duration: 'Mar 2025 (1 mo)',
+    highlights: [
+      'Co-developed an AI-powered Medical Diagnosis System using Machine Learning models on public healthcare datasets.',
+      'Gained valuable hands-on experience structuring, cleaning, and labeling dataset entries to establish high-fidelity model training grounds.',
+      'Evaluated model classification performance utilizing metric parameters including Precision, Recall, Accuracy, and Confusion Matrices.',
+      'Collaborated in an agile setting, delivering incremental presentation decks and progress summaries to program mentors.'
+    ],
+    skills: ['Python', 'TensorFlow', 'Data Labeling', 'Streamlit', 'Model Evaluation']
+  }
+];
 
-/* Nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid transparent;transition:all .3s}
-nav.scrolled{background:rgba(8,12,20,.85);border-color:var(--border);backdrop-filter:blur(20px)}
-.nav-logo{font-family:var(--display);font-weight:800;font-size:18px;color:var(--text);text-decoration:none;letter-spacing:-.02em}
-.nav-logo span{color:var(--accent)}
-.nav-links{display:flex;gap:36px;list-style:none}
-.nav-links a{font-family:var(--mono);font-size:12px;color:var(--text2);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;transition:color .2s;position:relative}
-.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width .3s}
-.nav-links a:hover{color:var(--accent)}
-.nav-links a:hover::after{width:100%}
-.nav-cta{font-family:var(--mono);font-size:12px;padding:10px 20px;border:1px solid var(--accent);color:var(--accent);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;transition:all .2s}
-.nav-cta:hover{background:var(--accent);color:var(--bg)}
+const SKILL_CATEGORIES = [
+  {
+    name: 'Core BI & Reporting',
+    items: [
+      { name: 'Power BI', level: 90, description: 'DAX formulas, Power Query, relational schemas, customized corporate layouts.' },
+      { name: 'MS Excel / Google Sheets', level: 85, description: 'Nested VLOOKUP/XLOOKUP, pivot tables, complex formatting, charts, audit verification.' },
+      { name: 'KPI Design', level: 80, description: 'Formulating metric cards, monitoring year-over-year growth, tracking critical operations.' }
+    ]
+  },
+  {
+    name: 'Database & Programming',
+    items: [
+      { name: 'SQL (MySQL / SQL Server)', level: 85, description: 'Multi-table JOINs, GROUP BY, aggregates, window operations, subqueries, CASE condition structures.' },
+      { name: 'Python (Data Science)', level: 75, description: 'Exploratory data analysis, Pandas, NumPy, visualization libraries (Matplotlib, Seaborn).' },
+      { name: 'MongoDB', level: 60, description: 'Basic document structure manipulation, aggregation frameworks, NoSQL collections.' }
+    ]
+  },
+  {
+    name: 'Data Operations & Governance',
+    items: [
+      { name: 'Data Cleaning & EDA', level: 90, description: 'Null-value identification, anomaly isolation, structural normalization, text parsing.' },
+      { name: 'Structured Documentation', level: 85, description: 'Workflow manuals, database dictionaries, project summary briefs.' },
+      { name: 'Attention to Detail', level: 95, description: 'Checking quality-critical outputs systematically, preventing formula and value mismatches.' }
+    ]
+  }
+];
 
-/* Hero */
-#hero{min-height:100vh;display:flex;align-items:center;padding:0 60px;position:relative;z-index:1;overflow:hidden}
-.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;width:100%;max-width:1300px;margin:0 auto}
-.hero-left{opacity:0;transform:translateY(40px);animation:fadeUp .9s .2s forwards}
-.hero-tag{font-family:var(--mono);font-size:11px;color:var(--accent2);letter-spacing:.15em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:10px}
-.hero-tag::before{content:'';width:32px;height:1px;background:var(--accent2)}
-.hero-name{font-family:var(--display);font-size:clamp(52px,6vw,84px);font-weight:800;line-height:.95;letter-spacing:-.03em;margin-bottom:24px}
-.hero-name .line2{color:var(--accent);display:block}
-.hero-desc{font-size:17px;color:var(--text2);line-height:1.7;max-width:480px;margin-bottom:48px;font-weight:300}
-.hero-btns{display:flex;gap:16px;flex-wrap:wrap}
-.btn-primary{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;background:var(--accent);color:white;text-decoration:none;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;transition:all .3s;position:relative;overflow:hidden}
-.btn-primary::before{content:'';position:absolute;inset:0;background:var(--accent2);transform:translateX(-100%);transition:transform .3s}
-.btn-primary:hover::before{transform:translateX(0)}
-.btn-primary span{position:relative;z-index:1}
-.btn-secondary{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border:1px solid var(--border2);color:var(--text2);text-decoration:none;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;transition:all .3s}
-.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
-.hero-right{opacity:0;transform:translateY(40px);animation:fadeUp .9s .5s forwards}
-.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:2px}
-.stat-card{background:var(--surface);border:1px solid var(--border);padding:28px;transition:all .3s;position:relative;overflow:hidden}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transition:transform .3s;transform-origin:left}
-.stat-card:hover::before{transform:scaleX(1)}
-.stat-card:hover{border-color:var(--border2);background:var(--bg3)}
-.stat-num{font-family:var(--display);font-size:42px;font-weight:800;color:var(--accent);line-height:1;margin-bottom:8px}
-.stat-label{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase}
-.stat-desc{font-size:13px;color:var(--text2);margin-top:6px}
-.hero-scroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:.5}
-.hero-scroll span{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase}
-.scroll-line{width:1px;height:50px;background:linear-gradient(to bottom,var(--border2),transparent);animation:scrollAnim 2s infinite}
+const CERTIFICATIONS = [
+  { name: 'Power BI Data Analyst', issuer: 'Microsoft', year: '2025', badge: 'PL-300 Standard' },
+  { name: 'Foundations of Data Science', issuer: 'Google', year: '2024', badge: 'Analytical Foundations' },
+  { name: 'Python Programming', issuer: 'IBM', year: '2024', badge: 'Core Implementation' },
+  { name: 'Databases & SQL for Data Science', issuer: 'IBM', year: '2024', badge: 'Relational Querying' },
+  { name: 'Programming with Generative AI', issuer: 'IIT', year: '2025', badge: 'Emerging Frameworks' }
+];
 
-/* Sections */
-section{padding:120px 60px;position:relative;z-index:1;max-width:1300px;margin:0 auto}
-.section-label{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:12px}
-.section-label::before{content:'';width:24px;height:1px;background:var(--accent)}
-.section-title{font-family:var(--display);font-size:clamp(36px,4vw,56px);font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:16px}
-.section-sub{font-size:16px;color:var(--text2);font-weight:300;max-width:540px;line-height:1.7}
+const JOB_SIMULATIONS = [
+  { company: 'Deloitte', role: 'Data Analytics Job Simulation', focus: 'Client insights, operational reporting requirements' },
+  { company: 'Quantium', role: 'Data Analytics Job Simulation', focus: 'Retail analysis, chip category transaction behaviors' },
+  { company: 'Tata Group', role: 'Data Visualization Simulation', focus: 'Executive dashboard styling, business scenario modeling' }
+];
 
-/* About */
-#about{padding-top:0}
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;margin-top:72px;align-items:start}
-.about-text p{font-size:16px;color:var(--text2);line-height:1.8;margin-bottom:20px;font-weight:300}
-.about-text p strong{color:var(--text);font-weight:500}
-.about-info{display:flex;flex-direction:column;gap:2px;margin-top:32px}
-.info-row{display:flex;gap:0;border:1px solid var(--border)}
-.info-row+.info-row{border-top:none}
-.info-key{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:14px 20px;background:var(--surface);width:140px;flex-shrink:0;border-right:1px solid var(--border)}
-.info-val{font-size:14px;color:var(--text);padding:14px 20px}
-.about-right{display:flex;flex-direction:column;gap:2px}
-.skill-category{background:var(--surface);border:1px solid var(--border);padding:24px;margin-bottom:2px;transition:border-color .3s}
-.skill-category:hover{border-color:var(--border2)}
-.skill-cat-label{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px}
-.skill-tags{display:flex;flex-wrap:wrap;gap:6px}
-.skill-tag{font-family:var(--mono);font-size:12px;padding:5px 12px;border:1px solid var(--border2);color:var(--text2);transition:all .2s}
-.skill-tag:hover{border-color:var(--accent);color:var(--accent)}
-.skill-tag.hot{border-color:rgba(46,136,255,.4);color:var(--accent);background:rgba(46,136,255,.08)}
+// ==========================================
+// POWER BI SIMULATOR SUB-DATA
+// ==========================================
+const BASE_SUPERSTORE_METRICS = {
+  All: {
+    All: { sales: 2297200, profit: 286397, margin: 12.4, orders: 9994, lossOrders: 1240 },
+    Furniture: { sales: 742000, profit: 18451, margin: 2.5, orders: 3725, lossOrders: 540 },
+    Office: { sales: 719000, profit: 122490, margin: 17.0, orders: 4850, lossOrders: 420 },
+    Technology: { sales: 836200, profit: 145456, margin: 17.4, orders: 1419, lossOrders: 280 }
+  },
+  East: {
+    All: { sales: 678782, profit: 91522, margin: 13.4, orders: 2848, lossOrders: 310 },
+    Furniture: { sales: 208291, profit: 3046, margin: 1.4, orders: 1010, lossOrders: 112 },
+    Office: { sales: 205516, profit: 41014, margin: 19.9, orders: 1420, lossOrders: 118 },
+    Technology: { sales: 264975, profit: 47462, margin: 17.9, orders: 418, lossOrders: 80 }
+  },
+  West: {
+    All: { sales: 725457, profit: 108418, margin: 14.9, orders: 3203, lossOrders: 290 },
+    Furniture: { sales: 252612, profit: 11504, margin: 4.5, orders: 1190, lossOrders: 98 },
+    Office: { sales: 220853, profit: 52609, margin: 23.8, orders: 1530, lossOrders: 110 },
+    Technology: { sales: 251992, profit: 44305, margin: 17.5, orders: 483, lossOrders: 82 }
+  },
+  Central: {
+    All: { sales: 501239, profit: 39706, margin: 7.9, orders: 2323, lossOrders: 410 },
+    Furniture: { sales: 163797, profit: -2871, margin: -1.7, orders: 810, lossOrders: 210 },
+    Office: { sales: 167026, profit: 8879, margin: 5.3, orders: 1140, lossOrders: 130 },
+    Technology: { sales: 170416, profit: 33698, margin: 19.7, orders: 373, lossOrders: 70 }
+  },
+  South: {
+    All: { sales: 391722, profit: 46749, margin: 11.9, orders: 1620, lossOrders: 230 },
+    Furniture: { sales: 117301, profit: 6772, margin: 5.7, orders: 715, lossOrders: 120 },
+    Office: { sales: 125656, profit: 19986, margin: 15.9, orders: 760, lossOrders: 62 },
+    Technology: { sales: 148765, profit: 19991, margin: 13.4, orders: 145, lossOrders: 48 }
+  }
+};
 
-/* Projects */
-#projects{border-top:1px solid var(--border)}
-.projects-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:72px}
-.projects-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
-.project-card{background:var(--surface);border:1px solid var(--border);padding:40px;transition:all .4s;position:relative;overflow:hidden;cursor:pointer;text-decoration:none;display:block;color:inherit}
-.project-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(46,136,255,.06),transparent);opacity:0;transition:opacity .4s}
-.project-card:hover::before{opacity:1}
-.project-card:hover{border-color:var(--border2);transform:translateY(-2px)}
-.project-card.featured{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-.project-num{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.1em;margin-bottom:20px}
-.project-title{font-family:var(--display);font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:12px;line-height:1.1}
-.project-desc{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:24px;font-weight:300}
-.project-findings{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
-.finding{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text2)}
-.finding::before{content:'→';color:var(--accent2);font-family:var(--mono);flex-shrink:0;margin-top:1px}
-.project-tags{display:flex;flex-wrap:wrap;gap:6px}
-.project-tag{font-family:var(--mono);font-size:10px;padding:4px 10px;border:1px solid var(--border2);color:var(--text3);letter-spacing:.06em}
-.project-arrow{position:absolute;top:32px;right:32px;width:36px;height:36px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text3);transition:all .3s;font-size:16px}
-.project-card:hover .project-arrow{border-color:var(--accent);color:var(--accent);background:rgba(46,136,255,.1)}
-.project-visual{background:var(--bg2);border:1px solid var(--border);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.chart-mock{width:100%;height:100%;padding:24px;display:flex;flex-direction:column;gap:12px}
-.chart-bar-row{display:flex;align-items:center;gap:10px}
-.chart-bar-label{font-family:var(--mono);font-size:10px;color:var(--text3);width:60px;text-align:right;flex-shrink:0}
-.chart-bar-track{flex:1;height:8px;background:var(--border);border-radius:0;position:relative;overflow:hidden}
-.chart-bar-fill{height:100%;border-radius:0;position:relative}
-.chart-bar-fill.b1{width:87%;background:linear-gradient(90deg,var(--accent),rgba(46,136,255,.4));animation:barGrow 1.5s .3s both}
-.chart-bar-fill.b2{width:72%;background:linear-gradient(90deg,var(--accent2),rgba(0,212,170,.4));animation:barGrow 1.5s .5s both}
-.chart-bar-fill.b3{width:45%;background:linear-gradient(90deg,var(--accent3),rgba(255,107,53,.4));animation:barGrow 1.5s .7s both}
-.chart-bar-fill.b4{width:31%;background:linear-gradient(90deg,#8B5CF6,rgba(139,92,246,.4));animation:barGrow 1.5s .9s both}
-.chart-title{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+const CHART_DATA_TRENDS = {
+  All: [15, 22, 18, 25, 30, 42, 38, 48, 55, 62, 58, 70],
+  East: [12, 15, 14, 19, 24, 30, 28, 35, 40, 48, 42, 51],
+  West: [18, 25, 22, 28, 32, 45, 40, 52, 58, 65, 63, 75],
+  Central: [10, 12, 11, 15, 18, 22, 20, 25, 28, 32, 30, 38],
+  South: [8, 10, 9, 12, 14, 18, 16, 21, 23, 27, 25, 31]
+};
 
-/* Experience */
-#experience{border-top:1px solid var(--border)}
-.exp-grid{margin-top:72px;display:flex;flex-direction:column;gap:2px}
-.exp-card{background:var(--surface);border:1px solid var(--border);padding:36px 40px;display:grid;grid-template-columns:200px 1fr;gap:40px;transition:border-color .3s}
-.exp-card:hover{border-color:var(--border2)}
-.exp-left{}
-.exp-period{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.08em;margin-bottom:8px}
-.exp-company{font-size:13px;color:var(--text3);font-weight:300}
-.exp-right{}
-.exp-title{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
-.exp-type{font-family:var(--mono);font-size:10px;color:var(--accent2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
-.exp-points{display:flex;flex-direction:column;gap:8px}
-.exp-point{font-size:14px;color:var(--text2);line-height:1.6;display:flex;gap:10px;font-weight:300}
-.exp-point::before{content:'▸';color:var(--accent);flex-shrink:0;font-size:12px;margin-top:2px}
+// ==========================================
+// SQL TERMINAL MOCK QUERIES
+// ==========================================
+const SQL_QUERIES = [
+  {
+    id: 'q1',
+    title: 'Identify Heavy Loss Orders (High Discount >= 30%)',
+    code: `SELECT Order_ID, Customer_Name, Category, Sales, Discount, Profit\nFROM superstore_orders\nWHERE Discount >= 0.30\nORDER BY Profit ASC\nLIMIT 5;`,
+    explanation: 'Uncovers how deep discounts directly trigger severe financial losses for the business.',
+    result: [
+      { order_id: 'CA-2017-108196', customer: 'Sanjit Chand', category: 'Technology', sales: '$2,263.84', discount: '70%', profit: '-$1,811.07' },
+      { order_id: 'US-2015-122714', customer: 'Henry Gold', category: 'Furniture', sales: '$1,029.95', discount: '60%', profit: '-$1,049.91' },
+      { order_id: 'CA-2016-116365', customer: 'Clay Ludtke', category: 'Technology', sales: '$1,649.75', discount: '70%', profit: '-$989.85' },
+      { order_id: 'CA-2017-111111', customer: 'Jack Connor', category: 'Office Supplies', sales: '$820.00', discount: '80%', profit: '-$620.00' },
+      { order_id: 'CA-2016-154123', customer: 'Zuschuss Don', category: 'Furniture', sales: '$683.00', discount: '60%', profit: '-$512.25' }
+    ],
+    insight: 'Pricing Leakage Detected: High discounts (60% to 80%) on expensive Furniture and Tech products generate substantial sales value but trigger negative profitability coefficients. Recommendation: Cap maximum seasonal promotional discounts at 25%.'
+  },
+  {
+    id: 'q2',
+    title: 'Top 3 Regional Profit Generators by Sub-Category',
+    code: `SELECT Region, Sub_Category, SUM(Sales) as Total_Sales, SUM(Profit) as Total_Profit\nFROM superstore_orders\nGROUP BY Region, Sub_Category\nORDER BY Total_Profit DESC\nLIMIT 3;`,
+    explanation: 'Determines which local product niches generate the highest absolute margins for strategic scaling.',
+    result: [
+      { region: 'West', sub_category: 'Copiers', total_sales: '$49,749.28', total_profit: '$19,327.25' },
+      { region: 'East', sub_category: 'Copiers', total_sales: '$53,219.40', total_profit: '$17,022.84' },
+      { region: 'West', sub_category: 'Accessories', total_sales: '$61,114.12', total_profit: '$16,484.62' }
+    ],
+    insight: 'High Utility Domination: Copiers and computer accessories in coastal regions (West/East) are the highest-performing margin segments. This suggests shifting inventory reserves toward these regions to support immediate demand.'
+  },
+  {
+    id: 'q3',
+    title: 'Segment Contrib percentage to Global Sales & Profit',
+    code: `SELECT Segment, COUNT(Order_ID) as Order_Count, \n       ROUND(SUM(Sales), 2) as Segment_Sales,\n       ROUND(SUM(Profit) / SUM(Sales) * 100, 1) as Profit_Margin_Pct\nFROM superstore_orders\nGROUP BY Segment;`,
+    explanation: 'Measures consumer vs. corporate performance dynamics across the database.',
+    result: [
+      { segment: 'Consumer', order_count: '5,191', segment_sales: '$1,161,401.34', profit_margin_pct: '11.5%' },
+      { segment: 'Corporate', order_count: '3,020', segment_sales: '$706,146.40', profit_margin_pct: '13.0%' },
+      { segment: 'Home Office', order_count: '1,783', segment_sales: '$429,653.15', profit_margin_pct: '14.0%' }
+    ],
+    insight: 'B2B Margin Superiority: While Consumer segment has the largest scale (5,191 orders), the Home Office segment leads in profit margin percentage (14.0%), closely followed by Corporate (13.0%). High B2B volume yields lower operational cost ratios.'
+  }
+];
 
-/* Certifications */
-#certifications{border-top:1px solid var(--border)}
-.cert-grid{margin-top:72px;display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
-.cert-card{background:var(--surface);border:1px solid var(--border);padding:32px;transition:all .3s;position:relative;overflow:hidden}
-.cert-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transform-origin:left;transition:transform .4s}
-.cert-card:hover{border-color:var(--border2)}
-.cert-card:hover::after{transform:scaleX(1)}
-.cert-issuer-badge{display:inline-block;font-family:var(--mono);font-size:10px;padding:4px 10px;border:1px solid var(--border2);color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
-.cert-issuer-badge.microsoft{border-color:rgba(0,120,212,.4);color:#0078D4;background:rgba(0,120,212,.08)}
-.cert-issuer-badge.ibm{border-color:rgba(0,119,255,.4);color:#0077FF;background:rgba(0,119,255,.08)}
-.cert-issuer-badge.google{border-color:rgba(52,168,83,.4);color:#34A853;background:rgba(52,168,83,.08)}
-.cert-name{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
+// ==========================================
+// MAIN COMPONENT
+// ==========================================
+export default function App() {
+  // Core System States
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [refreshCount, setRefreshCount] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [systemTime, setSystemTime] = useState(new Date().toLocaleTimeString());
+  const [userRole, setUserRole] = useState('Recruiter_Guest');
+  
+  // Power BI Simulation States
+  const [biRegion, setBiRegion] = useState('All');
+  const [biCategory, setBiCategory] = useState('All');
+  const [activeBiMetricDetail, setActiveBiMetricDetail] = useState(null);
 
-/* Contact */
-#contact{border-top:1px solid var(--border)}
-.contact-inner{margin-top:72px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
-.contact-left .big-text{font-family:var(--display);font-size:clamp(40px,5vw,72px);font-weight:800;letter-spacing:-.04em;line-height:.95;margin-bottom:32px}
-.contact-left .big-text span{color:var(--accent)}
-.contact-left p{font-size:16px;color:var(--text2);line-height:1.7;font-weight:300;margin-bottom:40px}
-.contact-links{display:flex;flex-direction:column;gap:2px}
-.contact-link{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:var(--surface);border:1px solid var(--border);text-decoration:none;color:var(--text);transition:all .3s;font-family:var(--mono);font-size:13px}
-.contact-link:hover{border-color:var(--accent);background:rgba(46,136,255,.05);color:var(--accent)}
-.contact-link-label{color:var(--text3);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
-.contact-right{background:var(--surface);border:1px solid var(--border);padding:40px}
-.form-group{margin-bottom:20px}
-.form-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:8px}
-.form-input{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:14px 16px;font-family:var(--body);font-size:14px;outline:none;transition:border-color .3s;resize:none}
-.form-input:focus{border-color:var(--accent)}
-.form-input::placeholder{color:var(--text3)}
-.form-submit{width:100%;padding:16px;background:var(--accent);color:white;border:none;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
-.form-submit:hover{background:var(--accent2)}
+  // SQL Terminal Simulator States
+  const [selectedSqlQuery, setSelectedSqlQuery] = useState('q1');
+  const [terminalOutput, setTerminalOutput] = useState(SQL_QUERIES[0]);
+  const [isExecutingSql, setIsExecutingSql] = useState(false);
 
-/* Footer */
-footer{border-top:1px solid var(--border);padding:40px 60px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;max-width:1300px;margin:0 auto}
-.footer-left{font-family:var(--mono);font-size:12px;color:var(--text3)}
-.footer-right{font-family:var(--mono);font-size:12px;color:var(--text3)}
-.footer-right span{color:var(--accent)}
+  // ML Heart Disease Simulator States
+  const [mlAge, setMlAge] = useState(55);
+  const [mlCholesterol, setMlCholesterol] = useState(240);
+  const [mlHeartRate, setMlHeartRate] = useState(145);
+  const [mlInferenceResult, setMlInferenceResult] = useState({ risk: 'Low Risk', probability: 34, label: '0 (Normal)' });
+  const [isComputingMl, setIsComputingMl] = useState(false);
 
-/* Floating data particles */
-.particle{position:fixed;pointer-events:none;font-family:var(--mono);font-size:10px;color:rgba(46,136,255,.15);z-index:0;animation:float linear infinite}
+  // "Insights About Me" Database Query States
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedInsightCategory, setSelectedInsightCategory] = useState('All');
+  const [isCopied, setIsCopied] = useState(false);
 
-/* Animations */
-@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-@keyframes scrollAnim{0%{opacity:1;transform:scaleY(1)}100%{opacity:0;transform:scaleY(0);transform-origin:top}}
-@keyframes barGrow{from{width:0}to{}}
-@keyframes float{0%{transform:translateY(100vh);opacity:0}10%{opacity:1}90%{opacity:.5}100%{transform:translateY(-100px);opacity:0}}
-@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
-.reveal.visible{opacity:1;transform:translateY(0)}
+  // Tick Uptime
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSystemTime(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-/* Active nav */
-.status-dot{width:6px;height:6px;background:var(--accent2);border-radius:50%;display:inline-block;margin-right:8px;animation:pulse 2s infinite}
+  // System Refresh Action
+  const triggerSystemRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setRefreshCount(prev => prev + 1);
+      setIsRefreshing(false);
+    }, 900);
+  };
 
-@media(max-width:900px){
-  nav{padding:20px 24px}
-  .nav-links{display:none}
-  #hero,section,footer{padding-left:24px;padding-right:24px}
-  .hero-grid,.about-grid,.projects-grid,.contact-inner{grid-template-columns:1fr;gap:48px}
-  .project-card.featured{grid-column:span 1;grid-template-columns:1fr}
-  .exp-card{grid-template-columns:1fr;gap:16px}
-  .cert-grid{grid-template-columns:1fr 1fr}
-}
-</style>
-</head>
-<body>
+  // Run SQL Simulator
+  const handleSqlSelectionChange = (queryId) => {
+    const q = SQL_QUERIES.find(item => item.id === queryId);
+    setIsExecutingSql(true);
+    setTimeout(() => {
+      setSelectedSqlQuery(queryId);
+      setTerminalOutput(q);
+      setIsExecutingSql(false);
+    }, 450);
+  };
 
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
+  // Run ML Inference Simulator
+  const computeInference = () => {
+    setIsComputingMl(true);
+    setTimeout(() => {
+      // Basic risk scoring algorithm simulation
+      let score = 0;
+      if (mlAge > 50) score += 15;
+      if (mlAge > 65) score += 15;
+      if (mlCholesterol > 200) score += 15;
+      if (mlCholesterol > 260) score += 20;
+      if (mlHeartRate < 130) score += 15; // Low peak heart rate in stress implies potential issue
+      if (mlHeartRate > 170) score += 10;
 
-<!-- Floating particles -->
-<div class="particle" style="left:5%;animation-duration:25s;animation-delay:0s">SELECT *</div>
-<div class="particle" style="left:15%;animation-duration:30s;animation-delay:5s">SUM(profit)</div>
-<div class="particle" style="left:25%;animation-duration:22s;animation-delay:10s">GROUP BY</div>
-<div class="particle" style="left:70%;animation-duration:28s;animation-delay:3s">df.groupby()</div>
-<div class="particle" style="left:80%;animation-duration:32s;animation-delay:8s">CALCULATE(</div>
-<div class="particle" style="left:90%;animation-duration:24s;animation-delay:15s">pd.merge()</div>
-<div class="particle" style="left:45%;animation-duration:35s;animation-delay:12s">PARTITION BY</div>
-<div class="particle" style="left:60%;animation-duration:26s;animation-delay:7s">YoY Growth</div>
+      let risk = 'Low Risk';
+      let label = '0 (Normal Data)';
+      if (score >= 45) {
+        risk = 'High Risk';
+        label = '1 (Symptomatic Path)';
+      } else if (score >= 25) {
+        risk = 'Borderline / Warning';
+        label = '0.5 (Further Evaluation)';
+      }
 
-<!-- Navigation -->
-<nav id="navbar">
-  <a href="#hero" class="nav-logo">AK<span>.</span>C</a>
-  <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#experience">Experience</a></li>
-    <li><a href="#certifications">Certifications</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-  <a href="mailto:krchoudharyaman@gmail.com" class="nav-cta">Contact</a>
-</nav>
+      setMlInferenceResult({
+        risk,
+        probability: Math.min(Math.max(score, 12), 94),
+        label
+      });
+      setIsComputingMl(false);
+    }, 400);
+  };
 
-<!-- Hero -->
-<section id="hero">
-  <div class="hero-grid">
-    <div class="hero-left">
-      <div class="hero-tag"><span class="status-dot"></span>Available for opportunities</div>
-      <h1 class="hero-name">
-        Aman Kumar
-        <span class="line2">Choudhary</span>
-      </h1>
-      <p class="hero-desc">
-        Data Analyst turning raw numbers into business decisions.
-        SQL · Python · Power BI · Excel — building insights that move the needle.
-      </p>
-      <div class="hero-btns">
-        <a href="#projects" class="btn-primary"><span>View Projects</span><span>→</span></a>
-        <a href="mailto:krchoudharyaman@gmail.com" class="btn-secondary">Get in Touch</a>
-      </div>
-    </div>
-    <div class="hero-right">
-      <div class="hero-stats">
-        <div class="stat-card">
-          <div class="stat-num">8.8</div>
-          <div class="stat-label">GPA</div>
-          <div class="stat-desc">BCA Data Science</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">4</div>
-          <div class="stat-label">Projects</div>
-          <div class="stat-desc">End-to-end analytics</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">5+</div>
-          <div class="stat-label">Certs</div>
-          <div class="stat-desc">IBM, Microsoft, Google</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">3</div>
-          <div class="stat-label">Simulations</div>
-          <div class="stat-desc">Deloitte, Tata, Quantium</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="hero-scroll">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
-  </div>
-</section>
+  useEffect(() => {
+    computeInference();
+  }, [mlAge, mlCholesterol, mlHeartRate]);
 
-<!-- About -->
-<section id="about">
-  <div class="section-label">About</div>
-  <h2 class="section-title">Who I Am</h2>
-  <div class="about-grid reveal">
-    <div class="about-text">
-      <p>Final-year <strong>BCA student specialising in Data Science</strong> at Lingaya's Vidyapeeth, Faridabad. I turn messy, raw datasets into clean insights and actionable recommendations that real businesses can act on.</p>
-      <p>My work spans the full analytics pipeline — <strong>data extraction with SQL</strong>, <strong>cleaning and EDA with Python</strong>, <strong>dashboarding with Power BI</strong>, and <strong>KPI reporting with Excel</strong>. I care about the story the data tells, not just the numbers.</p>
-      <p>I've completed virtual job simulations with <strong>Deloitte, Tata Group, and Quantium</strong> through Forage, and an <strong>AI internship</strong> through Microsoft & SAP's Techsaksham initiative.</p>
-      <div class="about-info">
-        <div class="info-row">
-          <div class="info-key">Location</div>
-          <div class="info-val">Faridabad, Haryana, India</div>
-        </div>
-        <div class="info-row">
-          <div class="info-key">Education</div>
-          <div class="info-val">BCA (Data Science) — Lingaya's Vidyapeeth</div>
-        </div>
-        <div class="info-row">
-          <div class="info-key">GPA</div>
-          <div class="info-val">8.8 / 10</div>
-        </div>
-        <div class="info-row">
-          <div class="info-key">Email</div>
-          <div class="info-val">krchoudharyaman@gmail.com</div>
-        </div>
-        <div class="info-row">
-          <div class="info-key">Status</div>
-          <div class="info-val"><span class="status-dot"></span>Seeking internship / entry-level roles</div>
-        </div>
-      </div>
-    </div>
-    <div class="about-right">
-      <div class="skill-category">
-        <div class="skill-cat-label">Data & Analytics</div>
-        <div class="skill-tags">
-          <span class="skill-tag hot">SQL</span>
-          <span class="skill-tag hot">Excel</span>
-          <span class="skill-tag hot">Power BI</span>
-          <span class="skill-tag">Data Cleaning</span>
-          <span class="skill-tag">EDA</span>
-          <span class="skill-tag">DAX</span>
-          <span class="skill-tag">KPI Design</span>
-          <span class="skill-tag">Pivot Tables</span>
-        </div>
-      </div>
-      <div class="skill-category">
-        <div class="skill-cat-label">Programming</div>
-        <div class="skill-tags">
-          <span class="skill-tag hot">Python</span>
-          <span class="skill-tag hot">Pandas</span>
-          <span class="skill-tag">NumPy</span>
-          <span class="skill-tag">Matplotlib</span>
-          <span class="skill-tag">Seaborn</span>
-        </div>
-      </div>
-      <div class="skill-category">
-        <div class="skill-cat-label">Databases</div>
-        <div class="skill-tags">
-          <span class="skill-tag hot">MySQL</span>
-          <span class="skill-tag">MongoDB</span>
-          <span class="skill-tag">SQLite</span>
-        </div>
-      </div>
-      <div class="skill-category">
-        <div class="skill-cat-label">Tools</div>
-        <div class="skill-tags">
-          <span class="skill-tag">GitHub</span>
-          <span class="skill-tag">Streamlit</span>
-          <span class="skill-tag">Jupyter</span>
-          <span class="skill-tag">Google Colab</span>
-          <span class="skill-tag">Power Query</span>
-        </div>
-      </div>
-      <div class="skill-category">
-        <div class="skill-cat-label">Soft Skills</div>
-        <div class="skill-tags">
-          <span class="skill-tag">Analytical Thinking</span>
-          <span class="skill-tag">Communication</span>
-          <span class="skill-tag">Problem Solving</span>
-          <span class="skill-tag">Time Management</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+  // Copy Contact Details to Clipboard (Custom Alert Frame Avoidance)
+  const copyToClipboard = (text) => {
+    const elem = document.createElement('textarea');
+    elem.value = text;
+    document.body.appendChild(elem);
+    elem.select();
+    document.execCommand('copy');
+    document.body.removeChild(elem);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
 
-<!-- Projects -->
-<section id="projects">
-  <div class="projects-header reveal">
-    <div>
-      <div class="section-label">Projects</div>
-      <h2 class="section-title">What I've Built</h2>
-    </div>
-    <a href="https://github.com/aman-krc" class="btn-secondary" target="_blank">All on GitHub →</a>
-  </div>
-  <div class="projects-grid">
+  // Filter "Aman as a Dataset" Rows
+  const filteredDatasetRows = DATA_INSIGHTS.filter(row => {
+    const matchesCategory = selectedInsightCategory === 'All' || row.category === selectedInsightCategory;
+    const matchesSearch = row.item.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          row.value.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
-    <!-- Featured -->
-    <a href="https://github.com/amam-krc/superstore-sales-analysis" class="project-card featured reveal" target="_blank">
-      <div>
-        <div class="project-num">01 — FEATURED</div>
-        <h3 class="project-title">Sales & Revenue Analysis</h3>
-        <p class="project-desc">End-to-end analysis of 9,994 Superstore orders across 4 US regions and 3 product categories. Built using SQL and Python to surface pricing strategy and regional performance insights.</p>
-        <div class="project-findings">
-          <div class="finding">Central & South regions 23% below avg revenue — traced to 2× higher discount rates</div>
-          <div class="finding">Orders with 30%+ discounts have 100% loss rate — every order loses money</div>
-          <div class="finding">Furniture earns only 0.73% profit margin despite being 2nd highest revenue category</div>
-        </div>
-        <div class="project-tags">
-          <span class="project-tag">Python</span>
-          <span class="project-tag">Pandas</span>
-          <span class="project-tag">SQL</span>
-          <span class="project-tag">Matplotlib</span>
-          <span class="project-tag">9,994 rows</span>
-        </div>
-      </div>
-      <div class="project-visual">
-        <div class="chart-mock">
-          <div class="chart-title">Regional Revenue Performance</div>
-          <div class="chart-bar-row">
-            <span class="chart-bar-label">West</span>
-            <div class="chart-bar-track"><div class="chart-bar-fill b1"></div></div>
+  // Derived dashboard metrics based on Power BI states
+  const activeMetrics = BASE_SUPERSTORE_METRICS[biRegion][biCategory];
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+      
+      {/* ==========================================
+          TOP SYSTEM METRIC BAR (HEADER)
+          ========================================== */}
+      <header className="border-b border-slate-800 bg-slate-900/85 backdrop-blur-sm sticky top-0 z-30 px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded bg-indigo-600 flex items-center justify-center border border-indigo-400/30">
+            <Database className="w-5 h-5 text-indigo-300" />
           </div>
-          <div class="chart-bar-row">
-            <span class="chart-bar-label">East</span>
-            <div class="chart-bar-track"><div class="chart-bar-fill b2"></div></div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="font-mono text-sm tracking-widest text-slate-300 font-bold uppercase">AKC_DATALINK_v2.6</h1>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            </div>
+            <p className="text-xs text-indigo-400 font-semibold">Aman Kumar Choudhary &middot; Portfolio Dashboard</p>
           </div>
-          <div class="chart-bar-row">
-            <span class="chart-bar-label">Central</span>
-            <div class="chart-bar-track"><div class="chart-bar-fill b3"></div></div>
+        </div>
+
+        {/* Real-time System KPIs */}
+        <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
+          <div className="bg-slate-950/80 px-3 py-1.5 rounded border border-slate-800">
+            <span className="text-slate-500">CONN_STABILITY: </span>
+            <span className="text-emerald-400">99.84% (UPTIME)</span>
           </div>
-          <div class="chart-bar-row">
-            <span class="chart-bar-label">South</span>
-            <div class="chart-bar-track"><div class="chart-bar-fill b4"></div></div>
+          <div className="bg-slate-950/80 px-3 py-1.5 rounded border border-slate-800 hidden md:block">
+            <span className="text-slate-500">REFRESHES: </span>
+            <span className="text-indigo-400">{refreshCount} cycles</span>
           </div>
-          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-            <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px">Discount vs Avg Profit</div>
-            <div style="display:flex;align-items:flex-end;gap:6px;height:60px">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-                <div style="width:100%;background:var(--accent2);border-radius:0" class="disc-bar" data-h="90"></div>
-                <span style="font-family:var(--mono);font-size:8px;color:var(--text3)">0%</span>
+          <div className="bg-slate-950/80 px-3 py-1.5 rounded border border-slate-800">
+            <span className="text-slate-500">LOCAL_TIME: </span>
+            <span className="text-slate-300">{systemTime}</span>
+          </div>
+          
+          <button 
+            onClick={triggerSystemRefresh}
+            disabled={isRefreshing}
+            className={`px-3 py-1.5 rounded bg-indigo-900/60 hover:bg-indigo-800/80 border border-indigo-500/30 transition-all flex items-center gap-2 text-indigo-200 active:scale-95 disabled:opacity-50`}
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
+            {isRefreshing ? 'REFRESHING...' : 'REFRESH METRICS'}
+          </button>
+        </div>
+      </header>
+
+      {/* ==========================================
+          MAIN APPLICATION LAYOUT
+          ========================================== */}
+      <div className="flex-1 flex flex-col lg:flex-row">
+        
+        {/* SIDEBAR NAVIGATION & CANDIDATE INSIGHTS CARD */}
+        <aside className="w-full lg:w-80 bg-slate-900/40 lg:border-r border-slate-800 p-5 flex flex-col gap-6 justify-between shrink-0">
+          <div className="flex flex-col gap-6">
+            
+            {/* Candidate Summary Card */}
+            <div className="relative group overflow-hidden rounded bg-gradient-to-b from-slate-800/70 to-slate-900/80 p-5 border border-slate-800">
+              <div className="absolute top-0 right-0 p-1.5 bg-indigo-900/40 border-l border-b border-slate-800 rounded-bl text-[9px] font-mono tracking-wider text-indigo-300 uppercase">
+                Data Science Core
               </div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-                <div style="width:100%;background:rgba(0,212,170,.6);border-radius:0" class="disc-bar" data-h="55"></div>
-                <span style="font-family:var(--mono);font-size:8px;color:var(--text3)">10%</span>
+
+              {/* Styled Profile Section with Avatar Fallback */}
+              <div className="flex items-center gap-4 mb-4">
+                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-indigo-500 bg-slate-800 flex items-center justify-center shrink-0">
+                  <img 
+                    src="image_fd1d25.png" 
+                    alt="Aman Kumar Choudhary" 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback if image fails to render cleanly
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                  {/* Backup SVG layout for Profile in case of missing file link rendering */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-indigo-950 text-indigo-300 font-bold text-lg font-mono">
+                    AKC
+                  </div>
+                </div>
+                <div>
+                  <h2 className="font-bold text-slate-100 tracking-tight text-lg">Aman Kumar C.</h2>
+                  <p className="text-xs text-indigo-400 font-mono tracking-wide">Reporting & Analytics</p>
+                  <p className="text-[10px] text-slate-500 flex items-center gap-1 mt-0.5">
+                    <MapPin className="w-3 h-3 shrink-0 text-indigo-400" />
+                    Faridabad, Haryana
+                  </p>
+                </div>
               </div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-                <div style="width:100%;background:rgba(255,107,53,.5);border-radius:0" class="disc-bar" data-h="15"></div>
-                <span style="font-family:var(--mono);font-size:8px;color:var(--text3)">20%</span>
+
+              <div className="text-xs text-slate-400 leading-relaxed border-t border-slate-800/80 pt-3">
+                BCA (Data Science) graduate specialized in structured data modeling, dashboard deployment, and robust SQL querying. Ready for immediate enterprise reporting workloads.
               </div>
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-                <div style="width:100%;background:var(--accent3);border-radius:0" class="disc-bar" data-h="5"></div>
-                <span style="font-family:var(--mono);font-size:8px;color:var(--text3)">30%+</span>
+
+              {/* Quick Credentials Summary */}
+              <div className="mt-4 grid grid-cols-2 gap-2 text-[11px] font-mono bg-slate-950/60 p-2.5 rounded border border-slate-800/60">
+                <div>
+                  <span className="text-slate-500 block">CGPA:</span>
+                  <span className="text-slate-200 font-bold">8.94 / 10.00</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block">STATUS:</span>
+                  <span className="text-emerald-400 font-bold">IMMEDIATE JOINEE</span>
+                </div>
               </div>
             </div>
+
+            {/* Sidebar Tab Navigation (BI Dashboard Style) */}
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-mono tracking-widest text-slate-500 uppercase px-2 mb-2 font-bold">Workspace Nav</span>
+              
+              <button 
+                onClick={() => setActiveTab('dashboard')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded text-xs font-mono transition-all text-left group ${activeTab === 'dashboard' ? 'bg-indigo-600/90 text-white font-bold border-l-4 border-indigo-400' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Layers className={`w-4 h-4 ${activeTab === 'dashboard' ? 'text-white' : 'text-slate-500 group-hover:text-indigo-400'}`} />
+                  <span>01 &middot; METRICS DASHBOARD</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+              </button>
+
+              <button 
+                onClick={() => setActiveTab('projects')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded text-xs font-mono transition-all text-left group ${activeTab === 'projects' ? 'bg-indigo-600/90 text-white font-bold border-l-4 border-indigo-400' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Terminal className={`w-4 h-4 ${activeTab === 'projects' ? 'text-white' : 'text-slate-500 group-hover:text-indigo-400'}`} />
+                  <span>02 &middot; ANALYTICS PROJECTS</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+              </button>
+
+              <button 
+                onClick={() => setActiveTab('experience')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded text-xs font-mono transition-all text-left group ${activeTab === 'experience' ? 'bg-indigo-600/90 text-white font-bold border-l-4 border-indigo-400' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Briefcase className={`w-4 h-4 ${activeTab === 'experience' ? 'text-white' : 'text-slate-500 group-hover:text-indigo-400'}`} />
+                  <span>03 &middot; INTERN CHRONOLOGY</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+              </button>
+
+              <button 
+                onClick={() => setActiveTab('skills')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded text-xs font-mono transition-all text-left group ${activeTab === 'skills' ? 'bg-indigo-600/90 text-white font-bold border-l-4 border-indigo-400' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Code className={`w-4 h-4 ${activeTab === 'skills' ? 'text-white' : 'text-slate-500 group-hover:text-indigo-400'}`} />
+                  <span>04 &middot; SKILLSET MATRIX</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+              </button>
+
+              <button 
+                onClick={() => setActiveTab('certs')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded text-xs font-mono transition-all text-left group ${activeTab === 'certs' ? 'bg-indigo-600/90 text-white font-bold border-l-4 border-indigo-400' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Award className={`w-4 h-4 ${activeTab === 'certs' ? 'text-white' : 'text-slate-500 group-hover:text-indigo-400'}`} />
+                  <span>05 &middot; CREDENTIALS & CERT</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+              </button>
+
+              <button 
+                onClick={() => setActiveTab('dataset')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded text-xs font-mono transition-all text-left group ${activeTab === 'dataset' ? 'bg-indigo-600/90 text-white font-bold border-l-4 border-indigo-400' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'}`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Search className={`w-4 h-4 ${activeTab === 'dataset' ? 'text-white' : 'text-slate-500 group-hover:text-indigo-400'}`} />
+                  <span>06 &middot; QUERY CANDIDATE</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="project-arrow">↗</div>
-    </a>
 
-    <!-- Card 2 -->
-    <a href="https://github.com/aman-krc/customer-churn-analysis" class="project-card reveal" target="_blank">
-      <div class="project-num">02</div>
-      <h3 class="project-title">Customer Churn Analysis</h3>
-      <p class="project-desc">Analysed telecom customer data using EDA to identify key churn drivers. Built high-risk customer segments and provided retention recommendations.</p>
-      <div class="project-findings">
-        <div class="finding">Identified churn patterns across tenure, contract type & payment method</div>
-        <div class="finding">Segment-level retention strategy recommendations</div>
-      </div>
-      <div class="project-tags">
-        <span class="project-tag">Python</span>
-        <span class="project-tag">Pandas</span>
-        <span class="project-tag">SQL</span>
-        <span class="project-tag">EDA</span>
-      </div>
-      <div class="project-arrow">↗</div>
-    </a>
-
-    <!-- Card 3 -->
-    <a href="https://github.com/aman-krc/powerbi-performance-dashboard" class="project-card reveal" target="_blank">
-      <div class="project-num">03</div>
-      <h3 class="project-title">Power BI Performance Dashboard</h3>
-      <p class="project-desc">Interactive executive dashboard tracking revenue, profit, and growth KPIs. Star schema data model with DAX time intelligence measures.</p>
-      <div class="project-findings">
-        <div class="finding">YoY growth, profit margin %, Sales YTD via DAX</div>
-        <div class="finding">Drill-through, slicers, bookmarks for executive use</div>
-      </div>
-      <div class="project-tags">
-        <span class="project-tag">Power BI</span>
-        <span class="project-tag">DAX</span>
-        <span class="project-tag">Power Query</span>
-      </div>
-      <div class="project-arrow">↗</div>
-    </a>
-
-    <!-- Card 4 -->
-    <a href="https://github.com/aman-krc/excel-kpi-reporting" class="project-card reveal" target="_blank">
-      <div class="project-num">04</div>
-      <h3 class="project-title">Excel KPI & Reporting System</h3>
-      <p class="project-desc">Full KPI tracking system with automated summaries, dynamic Pivot Tables, and executive-level dashboard with conditional formatting.</p>
-      <div class="project-findings">
-        <div class="finding">XLOOKUP, SUMIF, COUNTIF, nested IF automation</div>
-        <div class="finding">Interactive slicers for monthly & regional analysis</div>
-      </div>
-      <div class="project-tags">
-        <span class="project-tag">Excel</span>
-        <span class="project-tag">Pivot Tables</span>
-        <span class="project-tag">Power Query</span>
-      </div>
-      <div class="project-arrow">↗</div>
-    </a>
-
-  </div>
-</section>
-
-<!-- Experience -->
-<section id="experience">
-  <div class="section-label reveal">Experience</div>
-  <h2 class="section-title reveal">Where I've Worked</h2>
-  <div class="exp-grid">
-
-    <div class="exp-card reveal">
-      <div class="exp-left">
-        <div class="exp-period">2024</div>
-        <div class="exp-company">Forage</div>
-      </div>
-      <div class="exp-right">
-        <div class="exp-title">Data Analytics & Visualisation</div>
-        <div class="exp-type">Virtual Job Simulation — 
-        Deloitte · Quantium · Tata Group</div>
-        <div class="exp-points">
-          <div class="exp-point">Performed data analysis, customer segmentation, and sales trend analysis on structured datasets</div>
-          <div class="exp-point">Built dashboards and visualisations to communicate business insights effectively</div>
-          <div class="exp-point">Translated data findings into actionable recommendations for stakeholders</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="exp-card reveal">
-      <div class="exp-left">
-        <div class="exp-period">2024</div>
-        <div class="exp-company">Edunet Foundation</div>
-      </div>
-      <div class="exp-right">
-        <div class="exp-title">AI Internship — Techsaksham</div>
-        <div class="exp-type">Remote · Microsoft & SAP CSR Initiative</div>
-        <div class="exp-points">
-          <div class="exp-point">Completed project-based learning focused on data-driven problem solving</div>
-          <div class="exp-point">Worked with structured datasets and basic predictive analysis concepts</div>
-          <div class="exp-point">Strengthened analytical thinking and data interpretation skills</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="exp-card reveal">
-      <div class="exp-left">
-        <div class="exp-period">2023–24</div>
-        <div class="exp-company">Lingaya's Vidyapeeth</div>
-      </div>
-      <div class="exp-right">
-        <div class="exp-title">Stage Committee Sub-Head</div>
-        <div class="exp-type">ZEST Annual Fest — Event Management</div>
-        <div class="exp-points">
-          <div class="exp-point">Assisted in planning and on-ground coordination of university-wide annual fest</div>
-          <div class="exp-point">Managed cross-team execution and stakeholder communication</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- Certifications -->
-<section id="certifications">
-  <div class="section-label reveal">Certifications</div>
-  <h2 class="section-title reveal">Credentials</h2>
-  <div class="cert-grid">
-    <div class="cert-card reveal">
-      <span class="cert-issuer-badge microsoft">Microsoft</span>
-      <div class="cert-name">Power BI Data Analyst</div>
-    </div>
-    <div class="cert-card reveal">
-      <span class="cert-issuer-badge ibm">IBM</span>
-      <div class="cert-name">DB and SQL for Data Science with Python</div>
-    </div>
-    <div class="cert-card reveal">
-      <span class="cert-issuer-badge ibm">IBM</span>
-      <div class="cert-name">Python for Data Science</div>
-    </div>
-    <div class="cert-card reveal">
-      <span class="cert-issuer-badge">Microsoft</span>
-      <div class="cert-name">Advanced Excel</div>
-    </div>
-    <div class="cert-card reveal">
-      <span class="cert-issuer-badge google">Google</span>
-      <div class="cert-name">Introduction to Data Science</div>
-    </div>
-    <div class="cert-card reveal" style="display:flex;align-items:center;justify-content:center;background:var(--bg2)">
-      <div style="text-align:center">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">More coming</div>
-        <div style="font-family:var(--display);font-size:28px;font-weight:800;color:var(--border2)">+</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Contact -->
-<section id="contact">
-  <div class="section-label reveal">Contact</div>
-  <div class="contact-inner">
-    <div class="contact-left reveal">
-      <div class="big-text">Let's Work<br/><span>Together.</span></div>
-      <p>Open to Data Analyst, Associate Analyst, and Business Analyst internship or entry-level roles. Let's talk data.</p>
-      <div class="contact-links">
-        <a href="mailto:krchoudharyaman@gmail.com" class="contact-link">
-          <div>
-            <div class="contact-link-label">Email</div>
-            krchoudharyaman@gmail.com
+          {/* Social Contact Links Block */}
+          <div className="mt-8 pt-4 border-t border-slate-800/80 flex flex-col gap-3">
+            <span className="text-[10px] font-mono tracking-widest text-slate-500 uppercase px-2 font-bold">Contact Node</span>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <button 
+                onClick={() => copyToClipboard('krchoudharyaman@gmail.com')}
+                className="flex items-center gap-2 px-2 py-2 rounded bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-slate-300 transition-all text-left"
+              >
+                <Mail className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                <span className="truncate">Email Copy</span>
+              </button>
+              <a 
+                href="https://linkedin.com/in/amkran/" 
+                target="_blank" 
+                rel="noreferrer"
+                className="flex items-center gap-2 px-2 py-2 rounded bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-slate-300 transition-all text-left"
+              >
+                <Linkedin className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                <span className="truncate">LinkedIn</span>
+              </a>
+            </div>
+            {isCopied && (
+              <div className="text-center text-[10px] text-emerald-400 font-mono py-1 rounded bg-emerald-950/40 border border-emerald-900/60 animate-fade-in">
+                Email Address Copied to Clipboard
+              </div>
+            )}
           </div>
-          <span>↗</span>
-        </a>
-        <a href="https://linkedin.com/in/amkran" class="contact-link" target="_blank">
-          <div>
-            <div class="contact-link-label">LinkedIn</div>
-            linkedin.com/in/amkran
-          </div>
-          <span>↗</span>
-        </a>
-        <a href="https://github.com/aman-krc/" class="contact-link" target="_blank">
-          <div>
-            <div class="contact-link-label">GitHub</div>
-            github.com/aman-krc
-          </div>
-          <span>↗</span>
-        </a>
+        </aside>
+
+        {/* ==========================================
+            DYNAMIC CENTRAL CONTENT DASHBOARD
+            ========================================== */}
+        <main className="flex-1 bg-slate-950 p-4 lg:p-6 overflow-y-auto flex flex-col gap-6">
+          
+          {/* ==========================================
+              TAB 1: DYNAMIC CORE METRICS DASHBOARD
+              ========================================== */}
+          {activeTab === 'dashboard' && (
+            <div className="flex flex-col gap-6 animate-fade-in">
+              
+              {/* Executive Objective banner */}
+              <div className="bg-slate-900/45 border border-slate-800 rounded p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <h3 className="font-mono text-xs tracking-wider text-indigo-400 uppercase font-bold">PROFESSIONAL ORIENTATION</h3>
+                  <p className="text-sm text-slate-200">
+                    Targeting entry-level <span className="font-semibold text-slate-100">Data Analytics, Business Intelligence,</span> and <span className="font-semibold text-slate-100">Reporting Operations</span> roles where structural validation and analytical accuracy are highly valued.
+                  </p>
+                </div>
+                <div className="px-3 py-1.5 rounded bg-indigo-950 border border-indigo-500/30 text-xs font-mono text-indigo-300 whitespace-nowrap">
+                  BCA Grad &middot; July 2026 Batch
+                </div>
+              </div>
+
+              {/* 4 Interactive KPI Summary Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                
+                <div className="bg-slate-900/80 p-4 rounded border border-slate-800 flex flex-col gap-2 relative overflow-hidden group">
+                  <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-bold">Candidate Scorecard</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl lg:text-3xl font-mono font-bold text-slate-100">8.94</span>
+                    <span className="text-xs text-slate-500 font-mono">CGPA</span>
+                  </div>
+                  <div className="text-[11px] text-emerald-400 font-mono flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3 shrink-0" />
+                    <span>Graduation honors</span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-900/80 p-4 rounded border border-slate-800 flex flex-col gap-2 relative overflow-hidden group">
+                  <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-bold">Work Experience</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl lg:text-3xl font-mono font-bold text-slate-100">4</span>
+                    <span className="text-xs text-slate-500 font-mono">Programs</span>
+                  </div>
+                  <div className="text-[11px] text-indigo-400 font-mono flex items-center gap-1">
+                    <Briefcase className="w-3 h-3 shrink-0 text-indigo-400" />
+                    <span>Internships completed</span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-900/80 p-4 rounded border border-slate-800 flex flex-col gap-2 relative overflow-hidden group">
+                  <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-bold">Structured Projects</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl lg:text-3xl font-mono font-bold text-slate-100">3</span>
+                    <span className="text-xs text-slate-500 font-mono">Deployed</span>
+                  </div>
+                  <div className="text-[11px] text-indigo-400 font-mono flex items-center gap-1">
+                    <Code className="w-3 h-3 shrink-0 text-indigo-400" />
+                    <span>SQL, BI, ML Deployments</span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-900/80 p-4 rounded border border-slate-800 flex flex-col gap-2 relative overflow-hidden group">
+                  <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-bold">Credential Verifications</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl lg:text-3xl font-mono font-bold text-slate-100">5</span>
+                    <span className="text-xs text-slate-500 font-mono">Certs</span>
+                  </div>
+                  <div className="text-[11px] text-indigo-400 font-mono flex items-center gap-1">
+                    <Award className="w-3 h-3 shrink-0 text-indigo-400" />
+                    <span>Google, Microsoft, IBM</span>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Centerpiece Panel: Career Roadmap */}
+              <div className="bg-slate-900/40 border border-slate-800 rounded p-6">
+                <h3 className="font-mono text-sm tracking-widest text-slate-400 uppercase font-bold mb-6">Career Transition Pipeline</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
+                  
+                  <div className="bg-slate-950 p-4 rounded border border-slate-800/80 relative">
+                    <div className="w-8 h-8 rounded bg-indigo-950 border border-indigo-500/30 flex items-center justify-center font-mono text-xs text-indigo-400 mb-3 font-bold">01</div>
+                    <h4 className="font-mono text-xs font-bold text-slate-200 uppercase mb-1">Education Node</h4>
+                    <p className="text-xs text-slate-400">Lingaya’s Vidyapeeth BCA - Data Science. GPA: 8.94</p>
+                  </div>
+
+                  <div className="bg-slate-950 p-4 rounded border border-slate-800/80 relative">
+                    <div className="w-8 h-8 rounded bg-indigo-950 border border-indigo-500/30 flex items-center justify-center font-mono text-xs text-indigo-400 mb-3 font-bold">02</div>
+                    <h4 className="font-mono text-xs font-bold text-slate-200 uppercase mb-1">Data Foundations</h4>
+                    <p className="text-xs text-slate-400">Mastery in relational databases, core structured SQL processing.</p>
+                  </div>
+
+                  <div className="bg-slate-950 p-4 rounded border border-slate-800/80 relative">
+                    <div className="w-8 h-8 rounded bg-indigo-950 border border-indigo-500/30 flex items-center justify-center font-mono text-xs text-indigo-400 mb-3 font-bold">03</div>
+                    <h4 className="font-mono text-xs font-bold text-slate-200 uppercase mb-1">BI & Dashboarding</h4>
+                    <p className="text-xs text-slate-400">Power BI dashboarding, DAX logic, clean visuals.</p>
+                  </div>
+
+                  <div className="bg-slate-950 p-4 rounded border border-slate-800/80 relative">
+                    <div className="w-8 h-8 rounded bg-slate-900 border border-indigo-500/30 flex items-center justify-center font-mono text-xs text-indigo-400 mb-3 font-bold">04</div>
+                    <h4 className="font-mono text-xs font-bold text-slate-200 uppercase mb-1">Experience Loop</h4>
+                    <p className="text-xs text-slate-400">4 distinct intern programs covering research, BI, and operations.</p>
+                  </div>
+
+                  <div className="bg-slate-950 p-4 rounded border border-indigo-600 flex flex-col justify-between relative shadow-lg shadow-indigo-950/20">
+                    <div>
+                      <div className="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center font-mono text-xs text-white mb-3 font-bold">05</div>
+                      <h4 className="font-mono text-xs font-bold text-slate-100 uppercase mb-1">Target End-State</h4>
+                      <p className="text-xs text-slate-300">Reporting Executive, Junior BI Analyst, Operations Specialist.</p>
+                    </div>
+                    <div className="text-[10px] font-mono text-emerald-400 mt-2 bg-emerald-950/40 p-1 border border-emerald-900/40 text-center rounded uppercase">Ready For Offer</div>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Core Strength Matrix Block */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <div className="bg-slate-900/60 p-5 rounded border border-slate-800">
+                  <h4 className="font-mono text-xs font-bold text-indigo-400 uppercase tracking-wider mb-4">Functional & Technical Competencies</h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-slate-300">Structured Data Manipulation (SQL, pandas)</span>
+                        <span className="text-indigo-400 font-mono">85% Capacity</span>
+                      </div>
+                      <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden">
+                        <div className="bg-indigo-500 h-full rounded" style={{ width: '85%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-slate-300">BI Dashboard Design & Modeling (Power BI, Excel)</span>
+                        <span className="text-indigo-400 font-mono">90% Capacity</span>
+                      </div>
+                      <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden">
+                        <div className="bg-indigo-500 h-full rounded" style={{ width: '90%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-slate-300">Process Governance & Record Management</span>
+                        <span className="text-indigo-400 font-mono">88% Capacity</span>
+                      </div>
+                      <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden">
+                        <div className="bg-indigo-500 h-full rounded" style={{ width: '88%' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-5 bg-slate-950/60 p-3 rounded border border-slate-800 text-xs text-slate-400 leading-relaxed">
+                    Aman’s engineering baseline enables him to configure, parse, and quality-check multi-source records with minimal guidance.
+                  </div>
+                </div>
+
+                <div className="bg-slate-900/60 p-5 rounded border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <h4 className="font-mono text-xs font-bold text-indigo-400 uppercase tracking-wider mb-3">Governance & Operational Checklist</h4>
+                    <p className="text-xs text-slate-400 mb-4">Aman consistently executes tasks adhering to strict standards:</p>
+                    
+                    <div className="space-y-2.5 text-xs text-slate-300">
+                      <div className="flex items-start gap-2.5">
+                        <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>Highly organized record tracking (proven as Admissions Intern).</span>
+                      </div>
+                      <div className="flex items-start gap-2.5">
+                        <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>Adherence to rigorous design systems (Microsoft Power BI framework).</span>
+                      </div>
+                      <div className="flex items-start gap-2.5">
+                        <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>Strict literature validation benchmarks (IIIT Dharwad Research).</span>
+                      </div>
+                      <div className="flex items-start gap-2.5">
+                        <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>Data profiling, structured label validation, and edge-case assessment.</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 border-t border-slate-800 pt-4 flex justify-between items-center">
+                    <span className="text-[11px] font-mono text-slate-500">Need immediate analytics resources?</span>
+                    <button 
+                      onClick={() => setActiveTab('dataset')}
+                      className="text-xs text-indigo-300 hover:text-indigo-200 font-mono flex items-center gap-1 group"
+                    >
+                      Query details <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* ==========================================
+              TAB 2: INTERACTIVE ANALYTICS PROJECTS
+              ========================================== */}
+          {activeTab === 'projects' && (
+            <div className="flex flex-col gap-6 animate-fade-in">
+              
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-100 font-mono tracking-tight">02 &middot; CORE PROJECTS & BI DELIVERABLES</h2>
+                  <p className="text-xs text-slate-400">Interactive simulations proving analytical competency and business intelligence workflow design.</p>
+                </div>
+              </div>
+
+              {/* PROJECT 1: INTERACTIVE POWER BI DASHBOARD SIMULATOR */}
+              <div className="bg-slate-900/60 p-5 rounded border border-slate-800 flex flex-col gap-4">
+                
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div>
+                    <span className="px-2 py-0.5 rounded bg-indigo-950 border border-indigo-500/30 text-[10px] font-mono text-indigo-300 uppercase">Core Dashboard Project</span>
+                    <h3 className="text-lg font-bold text-slate-100 mt-1">Superstore Sales KPI Dashboard</h3>
+                    <p className="text-xs text-slate-400">Interactive multi-page BI deployment tracking 9,994 transaction records to expose operational trends.</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-mono">
+                    <span className="text-slate-500">Power BI Service Link:</span>
+                    <span className="px-2 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300 flex items-center gap-1">
+                      Published <ExternalLink className="w-3 h-3 text-indigo-400" />
+                    </span>
+                  </div>
+                </div>
+
+                {/* Simulated Power BI Canvas Box */}
+                <div className="bg-slate-950 rounded border border-slate-800 overflow-hidden flex flex-col">
+                  
+                  {/* Mock Power BI Action Ribbon */}
+                  <div className="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-2">
+                      <Layers className="w-4 h-4 text-indigo-400" />
+                      <span className="text-xs font-mono font-bold text-slate-200">POWER_BI_DASHBOARD_ENGINE [LIVE VIEW]</span>
+                    </div>
+                    
+                    {/* Simulated Filter Pane */}
+                    <div className="flex items-center gap-3 text-xs">
+                      <div className="flex items-center gap-1.5">
+                        <Filter className="w-3.5 h-3.5 text-indigo-400" />
+                        <span className="text-slate-500 font-mono">REGION:</span>
+                        <select 
+                          value={biRegion} 
+                          onChange={(e) => setBiRegion(e.target.value)}
+                          className="bg-slate-950 border border-slate-800 text-indigo-300 px-2 py-1 rounded focus:outline-none focus:border-indigo-500 cursor-pointer font-mono"
+                        >
+                          <option value="All">Global (All)</option>
+                          <option value="East">East Region</option>
+                          <option value="West">West Region</option>
+                          <option value="Central">Central Region</option>
+                          <option value="South">South Region</option>
+                        </select>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-slate-500 font-mono">CATEGORY:</span>
+                        <select 
+                          value={biCategory} 
+                          onChange={(e) => setBiCategory(e.target.value)}
+                          className="bg-slate-950 border border-slate-800 text-indigo-300 px-2 py-1 rounded focus:outline-none focus:border-indigo-500 cursor-pointer font-mono"
+                        >
+                          <option value="All">All Categories</option>
+                          <option value="Furniture">Furniture</option>
+                          <option value="Office">Office Supplies</option>
+                          <option value="Technology">Technology</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Simulator Canvas Workspace */}
+                  <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-950">
+                    
+                    {/* Card 1: Sales */}
+                    <div 
+                      onClick={() => setActiveBiMetricDetail('sales')}
+                      className="bg-slate-900/80 p-3.5 rounded border border-slate-800/80 hover:border-indigo-500/50 cursor-pointer transition-all"
+                    >
+                      <div className="flex justify-between items-center text-[10px] font-mono text-slate-500 uppercase">
+                        <span>Total Sales</span>
+                        <Activity className="w-3.5 h-3.5 text-indigo-400" />
+                      </div>
+                      <div className="text-2xl font-mono font-bold text-slate-100 mt-1">
+                        ${activeMetrics.sales.toLocaleString()}
+                      </div>
+                      <div className="text-[10px] font-mono text-emerald-400 mt-1 flex items-center gap-0.5">
+                        <span>+14.2% MoM</span>
+                      </div>
+                    </div>
+
+                    {/* Card 2: Profit */}
+                    <div 
+                      onClick={() => setActiveBiMetricDetail('profit')}
+                      className="bg-slate-900/80 p-3.5 rounded border border-slate-800/80 hover:border-indigo-500/50 cursor-pointer transition-all"
+                    >
+                      <div className="flex justify-between items-center text-[10px] font-mono text-slate-500 uppercase">
+                        <span>Total Profit</span>
+                        <Percent className="w-3.5 h-3.5 text-indigo-400" />
+                      </div>
+                      <div className={`text-2xl font-mono font-bold mt-1 ${activeMetrics.profit >= 0 ? 'text-slate-100' : 'text-rose-400'}`}>
+                        ${activeMetrics.profit.toLocaleString()}
+                      </div>
+                      <div className={`text-[10px] font-mono mt-1 ${activeMetrics.profit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        {activeMetrics.profit >= 0 ? 'Positive Net Yield' : 'Negative Deficit'}
+                      </div>
+                    </div>
+
+                    {/* Card 3: Margin */}
+                    <div 
+                      onClick={() => setActiveBiMetricDetail('margin')}
+                      className="bg-slate-900/80 p-3.5 rounded border border-slate-800/80 hover:border-indigo-500/50 cursor-pointer transition-all"
+                    >
+                      <div className="flex justify-between items-center text-[10px] font-mono text-slate-500 uppercase">
+                        <span>Profit Margin</span>
+                        <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
+                      </div>
+                      <div className={`text-2xl font-mono font-bold mt-1 ${activeMetrics.margin >= 0 ? 'text-indigo-400' : 'text-rose-400'}`}>
+                        {activeMetrics.margin}%
+                      </div>
+                      <div className="text-[10px] font-mono text-slate-500 mt-1">
+                        Target margin: 12.0%
+                      </div>
+                    </div>
+
+                    {/* Card 4: Orders */}
+                    <div 
+                      onClick={() => setActiveBiMetricDetail('orders')}
+                      className="bg-slate-900/80 p-3.5 rounded border border-slate-800/80 hover:border-indigo-500/50 cursor-pointer transition-all"
+                    >
+                      <div className="flex justify-between items-center text-[10px] font-mono text-slate-500 uppercase">
+                        <span>Transaction Volume</span>
+                        <FileCheck className="w-3.5 h-3.5 text-indigo-400" />
+                      </div>
+                      <div className="text-2xl font-mono font-bold text-slate-100 mt-1">
+                        {activeMetrics.orders.toLocaleString()}
+                      </div>
+                      <div className="text-[10px] font-mono text-slate-500 mt-1">
+                        Avg order: ${(activeMetrics.sales / activeMetrics.orders).toFixed(0)}
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* SVG Chart Panel Simulation */}
+                  <div className="p-4 bg-slate-950 border-t border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    {/* Simulated Trend Area Graph */}
+                    <div className="bg-slate-900/50 p-4 rounded border border-slate-800 flex flex-col justify-between col-span-2">
+                      <div>
+                        <h4 className="font-mono text-[10px] text-slate-400 uppercase tracking-wider mb-2 font-bold">Monthly Sales Performance Curve (FY-2025 Model)</h4>
+                        <div className="h-44 w-full relative flex items-end justify-between gap-1.5 pt-4">
+                          
+                          {/* SVG Path Background Grid */}
+                          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
+                            <div className="border-b border-slate-700 h-0"></div>
+                            <div className="border-b border-slate-700 h-0"></div>
+                            <div className="border-b border-slate-700 h-0"></div>
+                            <div className="border-b border-slate-700 h-0"></div>
+                          </div>
+
+                          {/* Dynamic SVG Sparkline rendition */}
+                          <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                            <defs>
+                              <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor="#6366f1" stopOpacity="0.4"/>
+                                <stop offset="100%" stopColor="#6366f1" stopOpacity="0"/>
+                              </linearGradient>
+                            </defs>
+                            <path 
+                              d={`M 0,100 L ${CHART_DATA_TRENDS[biRegion].map((val, idx) => `${idx * 9.09},${100 - val}`).join(' L ')} L 100,100 Z`} 
+                              fill="url(#chartGradient)"
+                            />
+                            <path 
+                              d={CHART_DATA_TRENDS[biRegion].map((val, idx) => `${idx === 0 ? 'M' : 'L'} ${idx * 9.09},${100 - val}`).join(' ')} 
+                              fill="none" 
+                              stroke="#818cf8" 
+                              strokeWidth="2"
+                            />
+                          </svg>
+
+                          {/* Render months labels */}
+                          <div className="absolute bottom-1 inset-x-0 flex justify-between text-[8px] text-slate-600 font-mono px-1">
+                            <span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span>
+                            <span>JUL</span><span>AUG</span><span>SEP</span><span>OCT</span><span>NOV</span><span>DEC</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[10px] font-mono text-indigo-400 border-t border-slate-800/80 pt-3 mt-2">
+                        <span>Active Filter Context: Region = {biRegion} &middot; Category = {biCategory}</span>
+                        <span>Source: Kaggle Superstore File</span>
+                      </div>
+                    </div>
+
+                    {/* Quick Insight Readout Panel */}
+                    <div className="bg-slate-900/50 p-4 rounded border border-slate-800 flex flex-col justify-between">
+                      <div>
+                        <h4 className="font-mono text-[10px] text-indigo-400 uppercase tracking-wider mb-2 font-bold flex items-center gap-1">
+                          <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                          Business Insights
+                        </h4>
+                        
+                        <div className="text-xs text-slate-300 leading-relaxed space-y-3 mt-3">
+                          <p>
+                            {biRegion === 'Central' && biCategory === 'Furniture' ? (
+                              <span className="text-rose-400 font-semibold block">⚠️ CRITICAL LOSS ENCOUNTERED:</span>
+                            ) : null}
+                            {biRegion === 'Central' && biCategory === 'Furniture' 
+                              ? "Central Region Furniture sales represent a key profit sink. Average high discounts of 30%+ in desk categories cause negative net yields."
+                              : `The active filter selection reports a profit of $${activeMetrics.profit.toLocaleString()} on gross transactions. Notice how Technology margins remain consistently robust across coastal regional filters.`
+                            }
+                          </p>
+                          <p className="text-[11px] text-slate-400">
+                            Aman configured this custom dashboard behavior utilizing complex DAX relational modeling, tracking Year-over-Year parameters.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="bg-indigo-950/40 border border-indigo-900/60 p-2.5 rounded text-[10px] font-mono text-indigo-300">
+                        <span className="font-bold text-slate-200 uppercase block mb-0.5">DAX Implementation:</span>
+                        <code>MoM Sales Growth = DIVIDE(CurrentMonth - PrevMonth, PrevMonth)</code>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* PROJECT 2: INTERACTIVE SQL PLAYGROUND SIMULATOR */}
+              <div className="bg-slate-900/60 p-5 rounded border border-slate-800 flex flex-col gap-4">
+                
+                <div>
+                  <span className="px-2 py-0.5 rounded bg-indigo-950 border border-indigo-500/30 text-[10px] font-mono text-indigo-300 uppercase">Interactive Query Sandbox</span>
+                  <h3 className="text-lg font-bold text-slate-100 mt-1">Sales & Revenue Analysis (SQL)</h3>
+                  <p className="text-xs text-slate-400">Pre-computed query execution terminal simulating relational analysis run against 9,994 superstore transaction rows.</p>
+                </div>
+
+                {/* Simulated SQL Editor Terminal Wrapper */}
+                <div className="bg-slate-950 rounded border border-slate-800 overflow-hidden flex flex-col md:flex-row min-h-[340px]">
+                  
+                  {/* Left Column: Query Selectors */}
+                  <div className="w-full md:w-1/3 bg-slate-900/30 p-4 border-r border-slate-800 flex flex-col gap-3">
+                    <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold">Select Active Query</span>
+                    
+                    {SQL_QUERIES.map((q) => (
+                      <button
+                        key={q.id}
+                        onClick={() => handleSqlSelectionChange(q.id)}
+                        className={`text-left p-3 rounded text-xs transition-all font-mono border ${selectedSqlQuery === q.id ? 'bg-indigo-950/80 border-indigo-500/50 text-indigo-200' : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'}`}
+                      >
+                        <div className="font-bold text-slate-300 mb-1">{q.id.toUpperCase()} : {q.title}</div>
+                        <div className="text-[10px] text-slate-500 line-clamp-1 truncate">{q.explanation}</div>
+                      </button>
+                    ))}
+
+                    <div className="mt-auto p-2 rounded bg-indigo-950/20 border border-indigo-900/40 text-[10px] text-slate-400 leading-relaxed">
+                      Aman utilized SQL aggregate transformations, logical CTEs, and window partitioning matrices to query raw source schemas directly.
+                    </div>
+                  </div>
+
+                  {/* Right Column: Code Viewer & Interactive Console */}
+                  <div className="flex-1 flex flex-col p-4 font-mono text-xs">
+                    
+                    {/* Execution Bar */}
+                    <div className="flex justify-between items-center bg-slate-900 px-3 py-2 rounded border border-slate-800 mb-4">
+                      <span className="text-slate-400">Database Engine: SQLite / MySQL_Instance</span>
+                      <span className="text-emerald-400 text-[10px] flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                        ONLINE
+                      </span>
+                    </div>
+
+                    {/* Query Code View */}
+                    <div className="bg-slate-900/90 p-3 rounded border border-slate-800 text-indigo-300 relative group overflow-x-auto whitespace-pre">
+                      <code>{terminalOutput.code}</code>
+                    </div>
+
+                    {/* Dynamic Run Output Table */}
+                    <div className="mt-4 flex-1 flex flex-col justify-between">
+                      <div>
+                        <span className="text-[10px] text-slate-500 uppercase tracking-wider block mb-2 font-bold">Query Execution Output Dataset:</span>
+                        
+                        {isExecutingSql ? (
+                          <div className="h-32 flex items-center justify-center text-slate-400 animate-pulse">
+                            <span>Executing query across schema. Please wait...</span>
+                          </div>
+                        ) : (
+                          <div className="overflow-x-auto border border-slate-800 rounded bg-slate-900/20">
+                            <table className="w-full text-left border-collapse">
+                              <thead>
+                                <tr className="border-b border-slate-800 bg-slate-900/50 text-[10px] text-slate-500">
+                                  {Object.keys(terminalOutput.result[0]).map((key) => (
+                                    <th key={key} className="p-2 uppercase">{key.replace('_', ' ')}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {terminalOutput.result.map((row, idx) => (
+                                  <tr key={idx} className="border-b border-slate-800/60 hover:bg-slate-900/40 text-slate-300">
+                                    {Object.values(row).map((val, vIdx) => (
+                                      <td key={vIdx} className="p-2 font-mono text-xs">{val}</td>
+                                    ))}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Summary Analysis Box */}
+                      <div className="mt-4 bg-indigo-950/30 border border-indigo-900/50 p-3 rounded">
+                        <span className="text-[10px] text-indigo-400 font-bold uppercase block mb-1">Extracted Business Logic Summary:</span>
+                        <p className="text-xs text-slate-300 leading-relaxed italic">
+                          "{terminalOutput.insight}"
+                        </p>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* PROJECT 3: INTERACTIVE HEART DISEASE RISK ESTIMATOR */}
+              <div className="bg-slate-900/60 p-5 rounded border border-slate-800 flex flex-col gap-4">
+                
+                <div>
+                  <span className="px-2 py-0.5 rounded bg-indigo-950 border border-indigo-500/30 text-[10px] font-mono text-indigo-300 uppercase">Machine Learning Deployment</span>
+                  <h3 className="text-lg font-bold text-slate-100 mt-1">Heart Disease Prediction (Inference Simulator)</h3>
+                  <p className="text-xs text-slate-400">Streamlit-inspired simulation demonstrating hands-on metrics logic applied to clinical healthcare parameters.</p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-slate-950 p-5 rounded border border-slate-800">
+                  
+                  {/* Form inputs left column */}
+                  <div className="space-y-4 lg:col-span-1">
+                    <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold block mb-2">Adjust Inference Parameters</span>
+                    
+                    <div>
+                      <label className="flex justify-between text-xs font-mono mb-1">
+                        <span className="text-slate-300">Patient Age (Years)</span>
+                        <span className="text-indigo-400 font-bold">{mlAge}</span>
+                      </label>
+                      <input 
+                        type="range" 
+                        min="25" 
+                        max="85" 
+                        value={mlAge} 
+                        onChange={(e) => setMlAge(Number(e.target.value))}
+                        className="w-full accent-indigo-500 h-1 bg-slate-800 rounded-lg cursor-pointer" 
+                      />
+                    </div>
+
+                    <div>
+                      <label className="flex justify-between text-xs font-mono mb-1">
+                        <span className="text-slate-300">Serum Cholesterol (mg/dl)</span>
+                        <span className="text-indigo-400 font-bold">{mlCholesterol}</span>
+                      </label>
+                      <input 
+                        type="range" 
+                        min="120" 
+                        max="380" 
+                        value={mlCholesterol} 
+                        onChange={(e) => setMlCholesterol(Number(e.target.value))}
+                        className="w-full accent-indigo-500 h-1 bg-slate-800 rounded-lg cursor-pointer" 
+                      />
+                    </div>
+
+                    <div>
+                      <label className="flex justify-between text-xs font-mono mb-1">
+                        <span className="text-slate-300">Max Heart Rate Achieved (bpm)</span>
+                        <span className="text-indigo-400 font-bold">{mlHeartRate}</span>
+                      </label>
+                      <input 
+                        type="range" 
+                        min="80" 
+                        max="210" 
+                        value={mlHeartRate} 
+                        onChange={(e) => setMlHeartRate(Number(e.target.value))}
+                        className="w-full accent-indigo-500 h-1 bg-slate-800 rounded-lg cursor-pointer" 
+                      />
+                    </div>
+
+                    <div className="p-3 bg-slate-900 rounded border border-slate-800 text-[10px] text-slate-400 leading-relaxed">
+                      Adjust parameters to simulate live pipeline prediction. ML workflows require strict validation parameters to output correctly.
+                    </div>
+                  </div>
+
+                  {/* Visualizer center column */}
+                  <div className="lg:col-span-1 flex flex-col justify-between bg-slate-900/40 p-4 rounded border border-slate-800">
+                    <div>
+                      <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block mb-4 font-bold">Pipeline Target Classification</span>
+                      
+                      <div className="flex flex-col items-center justify-center p-4 bg-slate-950 rounded border border-slate-800/60 min-h-[140px]">
+                        {isComputingMl ? (
+                          <div className="text-xs text-slate-400 font-mono animate-pulse">Running inference logic...</div>
+                        ) : (
+                          <div className="text-center space-y-2">
+                            <span className="text-[10px] font-mono text-slate-500 block uppercase">Inference Output Indicator</span>
+                            <div className={`text-xl font-bold font-mono px-3 py-1 rounded inline-block ${mlInferenceResult.risk === 'High Risk' ? 'bg-rose-950 text-rose-300 border border-rose-800' : mlInferenceResult.risk === 'Borderline / Warning' ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'}`}>
+                              {mlInferenceResult.risk}
+                            </div>
+                            <div className="text-xs font-mono text-slate-300 mt-2">
+                              Data Label Target: <span className="font-bold text-indigo-400">{mlInferenceResult.label}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5 mt-4">
+                      <div className="flex justify-between text-[10px] font-mono">
+                        <span className="text-slate-500">Anomaly Index Probability:</span>
+                        <span className="text-slate-300 font-bold">{mlInferenceResult.probability}%</span>
+                      </div>
+                      <div className="w-full bg-slate-950 h-1 rounded-full overflow-hidden">
+                        <div className={`h-full ${mlInferenceResult.risk === 'High Risk' ? 'bg-rose-500' : mlInferenceResult.risk === 'Borderline / Warning' ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${mlInferenceResult.probability}%` }}></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Data Engineering Context right column */}
+                  <div className="lg:col-span-1 flex flex-col justify-between">
+                    <div className="space-y-3 text-xs">
+                      <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block font-bold">Data Engineering Story</span>
+                      <p className="text-slate-300 leading-relaxed">
+                        In this project, Aman engineered and labeled ~300 patient health entries. To construct healthy modeling data, records were thoroughly parsed, structured, and labeled to map normal and high-risk factors cleanly.
+                      </p>
+                      <p className="text-slate-400 leading-relaxed">
+                        Accuracy was benchmarked using binary classifiers across TensorFlow layers, yielding direct exposure to structural dataset curation.
+                      </p>
+                    </div>
+
+                    <div className="mt-4 p-2.5 bg-indigo-950/40 border border-indigo-900/60 rounded text-[10px] font-mono text-indigo-300 text-center">
+                      Accuracy Target: ~82.4% validation metric
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* ==========================================
+              TAB 3: INTERACTIVE EXP TIMELINE & WORKSPACE
+              ========================================== */}
+          {activeTab === 'experience' && (
+            <div className="flex flex-col gap-6 animate-fade-in">
+              
+              <div>
+                <h2 className="text-xl font-bold text-slate-100 font-mono tracking-tight">03 &middot; CHRONOLOGICAL INDUSTRIAL INTERNSHIPS</h2>
+                <p className="text-xs text-slate-400">Review Aman's core hands-on operational work, duties, and execution records by clicking each role container.</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* Left Column: Interactive Timeline Navigation Card */}
+                <div className="lg:col-span-1 flex flex-col gap-3">
+                  <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold">Select Node Row</span>
+                  
+                  {EXPERIENCES.map((exp) => (
+                    <div key={exp.id} className="relative group">
+                      <div className="absolute inset-y-0 left-0 w-1 group-hover:bg-indigo-500/50 transition-colors"></div>
+                      <div className="bg-slate-900/50 hover:bg-slate-900 border border-slate-800 p-4 rounded pl-5 transition-all text-left">
+                        <div className="flex justify-between items-start">
+                          <span className="text-[10px] font-mono text-slate-500 uppercase">{exp.type}</span>
+                          <span className="text-[10px] font-mono text-indigo-400">{exp.duration}</span>
+                        </div>
+                        <h4 className="font-bold text-slate-200 mt-1 text-sm">{exp.role}</h4>
+                        <p className="text-xs text-slate-400">{exp.organization}</p>
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="bg-indigo-950/25 border border-indigo-900/50 p-4 rounded text-xs text-indigo-200/90 leading-relaxed mt-4 space-y-2">
+                    <p className="font-bold uppercase font-mono text-[10px] tracking-wider text-indigo-400">Recruiter Evaluation Index:</p>
+                    <p>
+                      Unlike hypothetical classroom projects, Aman’s timeline presents active operational involvement: admissions records maintenance, literature aggregation at a recognized tech institute, and clean dashboard configurations.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right Columns: Master Detail Workflow View */}
+                <div className="lg:col-span-2 space-y-6">
+                  
+                  {EXPERIENCES.map((exp) => (
+                    <div key={exp.id} className="bg-slate-900/45 p-6 rounded border border-slate-800 flex flex-col gap-4 relative">
+                      
+                      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-slate-800/80 pb-3">
+                        <div>
+                          <span className="px-2 py-0.5 rounded bg-indigo-950 border border-indigo-500/30 text-[9px] font-mono text-indigo-300 uppercase">Datalink Node: {exp.id.toUpperCase()}</span>
+                          <h3 className="text-lg font-bold text-slate-100 mt-1">{exp.role}</h3>
+                          <p className="text-xs text-slate-400 font-mono">{exp.organization} &middot; {exp.type}</p>
+                        </div>
+                        <div className="text-xs font-mono text-slate-400">{exp.duration}</div>
+                      </div>
+
+                      {/* Detail points */}
+                      <div>
+                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-3 font-bold">Key Deliverables & Responsibilities:</span>
+                        <ul className="space-y-3">
+                          {exp.highlights.map((h, hIdx) => (
+                            <li key={hIdx} className="flex items-start gap-2.5 text-xs text-slate-300 leading-relaxed">
+                              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></span>
+                              <span>{h}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Technical toolkit extracted */}
+                      <div className="border-t border-slate-800/80 pt-4 mt-2">
+                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-2 font-bold">Active Competencies Practiced:</span>
+                        <div className="flex flex-wrap gap-2">
+                          {exp.skills.map((s, sIdx) => (
+                            <span key={sIdx} className="px-2 py-1 rounded bg-slate-950 border border-slate-800 text-xs font-mono text-indigo-300">
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                    </div>
+                  ))}
+
+                </div>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* ==========================================
+              TAB 4: SKILLSET MATRIX & TOOLKIT
+              ========================================== */}
+          {activeTab === 'skills' && (
+            <div className="flex flex-col gap-6 animate-fade-in">
+              
+              <div>
+                <h2 className="text-xl font-bold text-slate-100 font-mono tracking-tight">04 &middot; TECHNICAL TOOLKIT COMPETENCY</h2>
+                <p className="text-xs text-slate-400">Structured catalog of technologies and operational practices supporting modern enterprise workloads.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                {SKILL_CATEGORIES.map((cat, catIdx) => (
+                  <div key={catIdx} className="bg-slate-900/60 p-5 rounded border border-slate-800 flex flex-col justify-between gap-6">
+                    <div>
+                      <h3 className="font-mono text-xs font-bold text-indigo-400 uppercase tracking-widest border-b border-slate-800 pb-2 mb-4">
+                        {cat.name}
+                      </h3>
+                      
+                      <div className="space-y-5">
+                        {cat.items.map((item, itemIdx) => (
+                          <div key={itemIdx} className="space-y-1.5">
+                            <div className="flex justify-between items-baseline text-xs">
+                              <span className="text-slate-200 font-medium">{item.name}</span>
+                              <span className="text-[11px] font-mono text-slate-500">{item.level}% Proficiency</span>
+                            </div>
+                            
+                            {/* Graphical indicator */}
+                            <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden">
+                              <div className="bg-indigo-500 h-full rounded-full" style={{ width: `${item.level}%` }}></div>
+                            </div>
+                            
+                            <p className="text-[11px] text-slate-400 leading-relaxed">
+                              {item.description}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-slate-950/60 border border-slate-800 rounded text-[10px] text-slate-500 font-mono">
+                      Metric parsed & validated inside portfolio framework.
+                    </div>
+                  </div>
+                ))}
+
+              </div>
+
+              {/* Functional Matrix Callout */}
+              <div className="bg-slate-900/40 p-5 rounded border border-slate-800 flex flex-col md:flex-row items-center gap-6 justify-between">
+                <div className="space-y-1 text-xs text-slate-300">
+                  <h4 className="font-mono text-xs font-bold text-slate-100 uppercase">Operational Soft Skills Summary</h4>
+                  <p className="text-slate-400 leading-relaxed">
+                    Aman is particularly equipped to handle highly structured documentation pipelines, perform consistent routine quality auditing, and maintain extreme diligence across high-volume daily reporting metrics.
+                  </p>
+                </div>
+                <div className="flex gap-4">
+                  <div className="bg-slate-950 px-3 py-2 rounded border border-slate-800/80 text-center text-xs">
+                    <span className="text-indigo-400 font-mono font-bold block">100%</span>
+                    <span className="text-[10px] text-slate-500 uppercase">Attention to Detail</span>
+                  </div>
+                  <div className="bg-slate-950 px-3 py-2 rounded border border-slate-800/80 text-center text-xs">
+                    <span className="text-indigo-400 font-mono font-bold block">Reliable</span>
+                    <span className="text-[10px] text-slate-500 uppercase">Process Execution</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* ==========================================
+              TAB 5: CREDENTIALS & CERTIFICATIONS
+              ========================================== */}
+          {activeTab === 'certs' && (
+            <div className="flex flex-col gap-6 animate-fade-in">
+              
+              <div>
+                <h2 className="text-xl font-bold text-slate-100 font-mono tracking-tight">05 &middot; AUDITED VERIFIED CREDENTIALS</h2>
+                <p className="text-xs text-slate-400">Formal industry-level certifications and simulated business operations certifying applied expertise.</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {/* Certifications Block */}
+                <div className="bg-slate-900/60 p-5 rounded border border-slate-800 space-y-4">
+                  <h3 className="font-mono text-xs font-bold text-indigo-400 uppercase tracking-widest border-b border-slate-800 pb-2 mb-2">
+                    Industry Technical Certifications
+                  </h3>
+
+                  <div className="space-y-3">
+                    {CERTIFICATIONS.map((cert, certIdx) => (
+                      <div key={certIdx} className="flex items-center justify-between p-3 rounded bg-slate-950 border border-slate-800/60 hover:border-slate-700 transition-all">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded bg-indigo-950/60 border border-indigo-500/20 flex items-center justify-center font-mono text-xs text-indigo-300 font-bold">
+                            {(certIdx + 1).toString().padStart(2, '0')}
+                          </div>
+                          <div>
+                            <h4 className="text-xs font-bold text-slate-200">{cert.name}</h4>
+                            <p className="text-[10px] text-slate-500 font-mono uppercase">{cert.issuer} &middot; Verified</p>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-mono text-indigo-400 bg-indigo-950/40 border border-indigo-900/60 px-2 py-0.5 rounded">
+                          {cert.badge}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Job Simulations Block */}
+                <div className="bg-slate-900/60 p-5 rounded border border-slate-800 flex flex-col justify-between gap-6">
+                  <div className="space-y-4">
+                    <h3 className="font-mono text-xs font-bold text-indigo-400 uppercase tracking-widest border-b border-slate-800 pb-2 mb-2">
+                      Structured Job Simulations (Forage)
+                    </h3>
+
+                    <div className="space-y-3">
+                      {JOB_SIMULATIONS.map((sim, simIdx) => (
+                        <div key={simIdx} className="p-3.5 rounded bg-slate-950 border border-slate-800/60 text-xs">
+                          <div className="flex justify-between items-baseline mb-1">
+                            <span className="font-bold text-slate-200">{sim.company} Data Analytics Simulation</span>
+                            <span className="text-[10px] font-mono text-slate-500">Virtual Case Studies</span>
+                          </div>
+                          <p className="text-slate-400 leading-relaxed text-[11px]">
+                            Developed core analytical models tracking {sim.focus}. Extracted operational metrics directly mirroring genuine modern corporate environments.
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-slate-950 rounded border border-slate-800/80 text-[11px] text-slate-400 leading-relaxed">
+                    Note: Forage programs are self-paced, rigorous industry models built on direct corporate training challenges, focusing on data formatting, client briefings, and operational dashboards.
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* ==========================================
+              TAB 6: UNIQUE FEATURE - QUERY CANDIDATE DATASET
+              ========================================== */}
+          {activeTab === 'dataset' && (
+            <div className="flex flex-col gap-6 animate-fade-in">
+              
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-100 font-mono tracking-tight">06 &middot; DYNAMIC CANDIDATE DATA SET VIEWER</h2>
+                  <p className="text-xs text-slate-400">Query and isolate specific details regarding Aman Kumar Choudhary directly from this structured repository table.</p>
+                </div>
+              </div>
+
+              {/* Interactive Control Console */}
+              <div className="bg-slate-900/60 p-4 rounded border border-slate-800 flex flex-col md:flex-row justify-between gap-4">
+                
+                {/* Search Input Filter */}
+                <div className="flex-1 flex items-center gap-2 bg-slate-950 border border-slate-800 px-3 py-2 rounded focus-within:border-indigo-500">
+                  <Search className="w-4 h-4 text-slate-500 shrink-0" />
+                  <input 
+                    type="text" 
+                    placeholder="Type keyword to filter rows (e.g., SQL, Power BI, Gurgaon, CGPA)..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="bg-transparent text-xs text-slate-200 focus:outline-none w-full font-mono"
+                  />
+                </div>
+
+                {/* Category Selector Buttons */}
+                <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap">
+                  {['All', 'Core Stack', 'Academic', 'Logistics', 'Soft Skills'].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedInsightCategory(cat)}
+                      className={`px-3 py-1.5 rounded text-xs font-mono border transition-all ${selectedInsightCategory === cat ? 'bg-indigo-600 border-indigo-400 text-white font-bold' : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'}`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+
+              </div>
+
+              {/* Data Table */}
+              <div className="bg-slate-900/40 rounded border border-slate-800 overflow-hidden">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-800 bg-slate-900/65 text-[10px] font-mono text-indigo-400 uppercase">
+                      <th className="p-3">RECORD_ID</th>
+                      <th className="p-3">CATEGORY</th>
+                      <th className="p-3">DATA POINT ITEM</th>
+                      <th className="p-3">CURRENT VALUE</th>
+                      <th className="p-3 text-right">METRIC STATUS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredDatasetRows.length === 0 ? (
+                      <tr>
+                        <td colSpan="5" className="p-6 text-center text-slate-500 font-mono italic">
+                          No dataset record matched your filter query parameters. Try a different keyword sequence.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredDatasetRows.map((row) => (
+                        <tr key={row.id} className="border-b border-slate-800/80 hover:bg-slate-900/30 transition-colors text-slate-300 font-mono">
+                          <td className="p-3 text-slate-500 font-bold">{row.id}</td>
+                          <td className="p-3">
+                            <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-[10px] text-slate-400 font-semibold uppercase">
+                              {row.category}
+                            </span>
+                          </td>
+                          <td className="p-3 text-slate-200 font-medium">{row.item}</td>
+                          <td className="p-3 text-indigo-300">{row.value}</td>
+                          <td className="p-3 text-right">
+                            <span className={`px-1.5 py-0.5 rounded text-[10px] uppercase font-bold ${row.status === 'Expert' || row.status === 'High Honors' || row.status === 'Available' ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-900' : 'bg-indigo-950/80 text-indigo-300 border border-indigo-900'}`}>
+                              {row.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Structured Recruitment Assessment Narrative card */}
+              <div className="bg-slate-900/60 p-6 rounded border border-slate-800 flex flex-col md:flex-row items-start justify-between gap-6">
+                <div className="space-y-2 max-w-2xl text-xs text-slate-300 leading-relaxed">
+                  <h4 className="font-mono text-xs font-bold text-indigo-400 uppercase">Comprehensive Analytical Profile Summary</h4>
+                  <p>
+                    Aman is highly prepared to transition into corporate structures. Having completed <span className="font-semibold text-indigo-300">4 distinct remote and on-site internships</span> covering documentation validation and client communications, his practical preparation is highly advanced compared to standard freshers.
+                  </p>
+                  <p className="text-slate-400">
+                    With an academic background in <span className="font-semibold text-slate-200">Data Science (BCA, 8.94 CGPA)</span>, he bridges the gap between understanding quantitative patterns and configuring practical business reports.
+                  </p>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded border border-slate-800/80 shrink-0 font-mono text-xs space-y-2 min-w-[200px]">
+                  <span className="text-slate-500 uppercase block font-bold text-[10px] tracking-wider mb-2">QUICK CONNECT CTAs:</span>
+                  <button 
+                    onClick={() => copyToClipboard('krchoudharyaman@gmail.com')}
+                    className="w-full flex items-center justify-between p-2 rounded bg-indigo-950 hover:bg-indigo-900 border border-indigo-500/30 text-indigo-300 font-semibold transition-all"
+                  >
+                    <span>Copy email</span>
+                    <Mail className="w-3.5 h-3.5" />
+                  </button>
+                  <a 
+                    href="https://linkedin.com/in/amkran/" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="w-full flex items-center justify-between p-2 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-semibold transition-all"
+                  >
+                    <span>View LinkedIn</span>
+                    <Linkedin className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          )}
+
+        </main>
       </div>
+
+      {/* ==========================================
+          FOOTER METADATA
+          ========================================== */}
+      <footer className="border-t border-slate-800 bg-slate-900/50 px-4 py-3 flex flex-wrap justify-between items-center text-[10px] font-mono text-slate-500 gap-2">
+        <div>
+          DESIGNED FOR METRIC VISIBILITY &middot; SECURITY STATE: SECURE_LINKED
+        </div>
+        <div>
+          PORTFOLIO &copy; {new Date().getFullYear()} AMAN KUMAR CHOUDHARY &middot; GLOBAL_INDEXED
+        </div>
+      </footer>
+
     </div>
-    
-<!-- Footer -->
-<footer>
-  <div class="footer-left">© 2025 Aman Kumar Choudhary </div>
-  <div class="footer-right">Faridabad, Haryana · <span>Open to Work</span></div>
-</footer>
-
-<script>
-// Custom cursor
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursor-ring');
-document.addEventListener('mousemove', e => {
-  cursor.style.left = e.clientX + 'px';
-  cursor.style.top = e.clientY + 'px';
-  setTimeout(() => {
-    ring.style.left = e.clientX + 'px';
-    ring.style.top = e.clientY + 'px';
-  }, 80);
-});
-
-// Navbar scroll
-window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
-});
-
-// Reveal on scroll
-const observer = new IntersectionObserver(entries => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 80);
-    }
-  });
-}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-// Animate disc bars
-const discBars = document.querySelectorAll('.disc-bar');
-discBars.forEach(bar => {
-  const h = bar.dataset.h;
-  bar.style.height = '0px';
-  setTimeout(() => { bar.style.height = h + '%'; bar.style.transition = 'height 1s ease'; }, 800);
-});
-
-// Smooth active nav highlighting
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.id; });
-  navLinks.forEach(a => {
-    a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
-  });
-});
-</script>
-</body>
-</html>
+  );
+}
